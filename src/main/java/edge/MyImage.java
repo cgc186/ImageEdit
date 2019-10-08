@@ -2,6 +2,7 @@ package edge;
 
 import second.edgeDetection.ImageUtil;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class MyImage {
@@ -19,8 +20,6 @@ public class MyImage {
         this.data = img.getRGB(0, 0, w, h, null, 0, w);
         this.gray = false;
         toGray();//灰度化
-
-
     }
 
     public MyImage(BufferedImage img, boolean gray) {
@@ -29,7 +28,6 @@ public class MyImage {
         this.w = img.getWidth();
         this.data = img.getRGB(0, 0, w, h, null, 0, w);
         this.gray = gray;
-
     }
 
 
@@ -46,7 +44,7 @@ public class MyImage {
 
 
     public BufferedImage toImage() {
-        BufferedImage image = new BufferedImage(this.w, this.h, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(this.w, this.h, Image.SCALE_DEFAULT);
         int[] d = new int[w * h];
         for (int i = 0; i < this.h; i++) {
             for (int j = 0; j < this.w; j++) {
@@ -70,7 +68,7 @@ public class MyImage {
                     int R = (c >> 16) & 0xFF;
                     int G = (c >> 8) & 0xFF;
                     int B = (c >> 0) & 0xFF;
-                    this.data[x + y * w] = (int) (0.3f * R + 0.59f * G + 0.11f * B); //to gray
+                    this.data[x + y * w] = (int) (0.21f * R + 0.70f * G + 0.07f * B); //to gray
                 }
             }
         }
