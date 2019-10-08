@@ -1,4 +1,4 @@
-package histogram
+package first.histogram
 
 import java.awt.Color
 import java.awt.image.BufferedImage

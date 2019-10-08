@@ -1,4 +1,4 @@
-package gaussian
+package first.gaussian
 
 
 import java.awt.Color
