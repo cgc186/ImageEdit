@@ -41,7 +41,7 @@ class HoughLine {
             }
         }
 
-        val index = maxIndex(hist, 90) //找到大于最大值*0.7的二维直方图的点
+        val index = maxIndex(hist, 70) //找到大于最大值*0.7的二维直方图的点
 
         for (k in 0 until index.size) {
             val resTheta = index[k].angle * Math.PI / (theta * 2)

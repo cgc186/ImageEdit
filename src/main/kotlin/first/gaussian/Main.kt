@@ -14,7 +14,7 @@ fun main() {
     val fd = FileDialog(jf,"选择图片")
     fd.show()
     val img = ImageIO.read(File(fd.directory,fd.file))
-    val resulting = gaussian.myGaussianFilter(img, 10, 3f)
+    val resulting = gaussian.myGaussianFilter(img, 3, 1.5f)
     val output = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_BGR)
     output.createGraphics().drawImage(resulting, 0, 0, null)
     val fd2 = FileDialog(jf,"储存图片")

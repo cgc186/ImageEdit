@@ -10,7 +10,9 @@ import kotlin.system.exitProcess
 fun main() {
     //val lineFilter= LineFilter()
 
-    val houghLine= HoughLine()
+    //val houghLine= HoughLine()
+
+    val houghLineFilter= HoughLineFilter()
 
     val jf = JFrame()
     val fd = FileDialog(jf,"选择图片")
@@ -18,7 +20,8 @@ fun main() {
     val img = ImageIO.read(File(fd.directory,fd.file))
     //val resulting = lineFilter.lineFilter(img)
 
-    val resulting = houghLine.hough(img)
+    //val resulting = houghLine.hough(img)
+    val resulting = houghLineFilter.filter(img)
 
     val output = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_BGR)
     output.createGraphics().drawImage(resulting, 0, 0, null)
