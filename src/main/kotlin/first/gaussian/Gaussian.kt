@@ -43,18 +43,16 @@ class Gaussian {
         return kernelData
     }
 
+    //    找到图像输入点f(i,j),以输入点为中心与核中心对齐
+    //    核心为中心参考点 卷积算子=>高斯矩阵180度转向计算
+    //    x y 代表卷积核的权值坐标   i j 代表图像输入点坐标
+    //    卷积算子     (f*g)(i,j) = f(i-k,j-l)g(k,l)          f代表图像输入 g代表核
+    //    带入核参考点 (f*g)(i,j) = f(i-(k-ai), j-(l-aj))g(k,l)   ai,aj 核参考点
+    //    加权求和  注意：核的坐标以左上0,0起点
+
     private fun gaussian(img: BufferedImage, kernel: Array<FloatArray>, _size: Int): BufferedImage {
-        //var temp = img.getScaledInstance(img.width, img.height, Image.SCALE_DEFAULT)
-        //val imgTemp :BufferedImage = (temp as (sun.awt.image.ToolkitImage)).bufferedImage
         for (i in 0 until img.width) {
             for (j in 0 until img.height) {
-
-                // [2] 找到图像输入点f(i,j),以输入点为中心与核中心对齐
-                //     核心为中心参考点 卷积算子=>高斯矩阵180度转向计算
-                //     x y 代表卷积核的权值坐标   i j 代表图像输入点坐标
-                //     卷积算子     (f*g)(i,j) = f(i-k,j-l)g(k,l)          f代表图像输入 g代表核
-                //     带入核参考点 (f*g)(i,j) = f(i-(k-ai), j-(l-aj))g(k,l)   ai,aj 核参考点
-                //     加权求和  注意：核的坐标以左上0,0起点
                 var sum = 0.0F
                 var r = 0.0F
                 var g = 0.0F
@@ -76,7 +74,6 @@ class Gaussian {
                         a += c.alpha * kernel[k][l]
                     }
                 }
-                // 放入中间结果,计算所得的值与没有计算的值不能混用
                 r /= sum
                 g /= sum
                 b /= sum
