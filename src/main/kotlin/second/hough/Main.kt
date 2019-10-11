@@ -12,7 +12,7 @@ fun main() {
 
     //val houghLine= HoughLine()
 
-    val houghLineFilter= HoughLineFilter()
+    val houghLineFilter= HoughLineFilter2()
 
     //val houghTransform=HoughTransform()
 
