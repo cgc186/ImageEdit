@@ -89,6 +89,8 @@ class HoughLineFilter {
         var line =
             mutableMapOf<Double, MutableMap<Int, MutableSet<Int>>>()
 
+        val result = mutableSetOf<Line>()
+
         // transfer back to image pixels space from hough parameter space
         val houghThreshold = (threshold * maxHough).toInt()
         for (row in 0 until houghSpace) {
@@ -120,49 +122,50 @@ class HoughLineFilter {
                 }
                 if (!isLine) continue
 
-                val dy = sin(row * houghInterval)
+                result.add(Line(row, col))
 
-                if (line.containsKey(dy)) {
-                    val value = line.getValue(dy)
-                    if (value.containsKey(row)) {
-                        value[row]?.add(col)
-                    } else {
-                        var set = mutableSetOf<Int>()
-                        set.add(col)
-                        value[row] = set
-                    }
-                } else {
-                    var set = mutableSetOf<Int>()
-                    set.add(col)
-                    var map = mutableMapOf<Int, MutableSet<Int>>()
-                    map[row] = set
-                    line[dy] = map
-                }
+//                val dy = sin(row * houghInterval)
+//
+//                if (line.containsKey(dy)) {
+//                    val value = line.getValue(dy)
+//                    if (value.containsKey(row)) {
+//                        value[row]?.add(col)
+//                    } else {
+//                        var set = mutableSetOf<Int>()
+//                        set.add(col)
+//                        value[row] = set
+//                    }
+//                } else {
+//                    var set = mutableSetOf<Int>()
+//                    set.add(col)
+//                    var map = mutableMapOf<Int, MutableSet<Int>>()
+//                    map[row] = set
+//                    line[dy] = map
+//                }
 
                 //println("row = $row col = $col dy = $dy dx = $dx")
 
             }
         }
 
-        val result = mutableSetOf<Line>()
 
-        line.map { m ->
+//        line.map { m ->
+//
+//            m.value.map { mm ->
+//                var maxHough = hough2d!![mm.key][mm.value.elementAt(0)]
+//                var row = mm.key
+//                var col = mm.value.elementAt(0)
+//                mm.value.forEach {
+//                    var hough = hough2d!![mm.key][it]
+//                    if (maxHough < hough) {
+//                        col = it
+//                    }
+//                }
+//                result.add(Line(row, col))
+//            }
+//        }
 
-            m.value.map { mm ->
-                var maxHough = hough2d!![mm.key][mm.value.elementAt(0)]
-                var row = mm.key
-                var col = mm.value.elementAt(0)
-                mm.value.forEach {
-                    var hough = hough2d!![mm.key][it]
-                    if (maxHough < hough) {
-                        col = it
-                    }
-                }
-                result.add(Line(row, col))
-            }
-        }
-
-        result.sortedBy { it.row }.forEach {  }
+        result.sortedBy { it.row }.forEach { }
 
         result.forEach {
             println("row:${it.row} col:${it.col}")
@@ -174,13 +177,13 @@ class HoughLineFilter {
 
         var i = 0
         var e = 0
-        while (i < result.size-1) {
+        while (i < result.size - 1) {
             temp.add(result.elementAt(i))
 
             for (j in i + 1 until result.size) {
                 //println("j:$j")
                 if (isAdjacent(result.elementAt(i), result.elementAt(j))) {
-                    println("add")
+                    //println("add")
                     temp.add(result.elementAt(j))
                     e = j
                 } else {
@@ -201,7 +204,7 @@ class HoughLineFilter {
                 }
             }
             temp.clear()
-            println("result add row:$row col:$col")
+            //println("result add row:$row col:$col")
             tResult.add(Line(row, col))
             if (e == result.size - 1) {
                 break
@@ -221,7 +224,7 @@ class HoughLineFilter {
                     val subCol =
                         ((it.col.toDouble() - maxLength.toDouble() - (subRow - centerY) * dy) / dx).toInt() + centerX
                     if (subCol in 0 until width) {
-                        image2d[subRow][subCol] = -16776961
+                        image2d[subRow][subCol] = 0xffff0000.toInt()
                     }
                 }
             } else {
@@ -229,7 +232,7 @@ class HoughLineFilter {
                     val subRow =
                         ((it.col.toDouble() - maxLength.toDouble() - (subCol - centerX) * dx) / dy).toInt() + centerY
                     if (subRow in 0 until height) {
-                        image2d[subRow][subCol] = -16776961
+                        image2d[subRow][subCol] = 0xffff0000.toInt()
                     }
                 }
             }
@@ -244,8 +247,9 @@ class HoughLineFilter {
     }
 
     private fun isAdjacent(a: Line, b: Line): Boolean {
-        for (i in -3..3) {
-            for (j in -3..3) {
+        var size = 6
+        for (i in -size..size) {
+            for (j in -size..size) {
                 if (i != 0 || j != 0) {
                     if (a.row + i == b.row && a.col + j == b.col) {
                         return true
