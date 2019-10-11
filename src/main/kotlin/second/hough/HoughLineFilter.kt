@@ -8,8 +8,7 @@ import kotlin.math.sqrt
 
 
 class HoughLineFilter {
-    private var houghSpace = 720
-    private var hough1d: IntArray? = null
+    private var houghSpace = 500  //霍夫空间
     private var hough2d: Array<IntArray>? = null
     private var width: Int = 0
     private var height: Int = 0
@@ -18,10 +17,12 @@ class HoughLineFilter {
     var scale: Float = 0.toFloat()
     var offset: Float = 0.toFloat()
 
+    class Line(var row: Int, var col: Int)
+
     init {
-        threshold = 0.7f //  default hough transform parameters
-        scale = 1.0f     //  scale = 1.0f;
-        offset = 0.0f    //  offset = 0.0f;
+        threshold = 0.7f //  default hough transform parameters 默认hough变换参数
+        scale = 1.0f     //  scale = 1.0f;                      规模
+        offset = 0.0f    //  offset = 0.0f;                     抵消
     }
 
     fun filter(src: BufferedImage): BufferedImage? {
@@ -42,48 +43,42 @@ class HoughLineFilter {
         // prepare for hough transform
         val centerX = width / 2
         val centerY = height / 2
-        val houghInterval = PI_VALUE / houghSpace.toDouble()
+        val houghInterval = Math.PI / houghSpace.toDouble()
 
         var max = width.coerceAtLeast(height)
         val maxLength = (sqrt(2.0) * max).toInt()
-        hough1d = IntArray(2 * houghSpace * maxLength)
 
         // define temp hough 2D array and initialize the hough 2D
+        // 定义临时hough 2d数组并初始化该数组
         hough2d = Array(houghSpace) { IntArray(2 * maxLength) }
-        for (i in 0 until houghSpace) {
-            for (j in 0 until 2 * maxLength) {
-                hough2d!![i][j] = 0
-            }
-        }
 
         // start hough transform now....
+        // 现在开始霍夫变换…
         val image2d = convert1Dto2D(inPixels)
         for (row in 0 until height) {
             for (col in 0 until width) {
-                val p = image2d[row][col] and 0xff
-                if (p == 0) continue // which means background color
-
-                // since we does not know the theta angle and r value,
-                // we have to calculate all hough space for each pixel point
-                // then we got the max possible theta and r pair.
+                if ((image2d[row][col] and 0xff) == 0) {
+                    continue // which means background color 也就是说背景色
+                }
+                // since we does not know the theta angle and r value,       因为我们不知道θ角和r值，
+                // we have to calculate all hough space for each pixel point 我们必须计算每个像素点的所有hough空间
+                // then we got the max possible theta and r pair.            然后得到最大可能的θ和r对。
                 // r = x * cos(theta) + y * sin(theta)
                 for (cell in 0 until houghSpace) {
                     max =
-                        ((col - centerX) * cos(cell * houghInterval) + (row - centerY) * sin(cell * houghInterval)).toInt()
-                    max += maxLength // start from zero, not (-max_length)
-                    if (max < 0 || max >= 2 * maxLength) {// make sure r did not out of scope[0, 2*max_lenght]
+                        ((col - centerX) * cos(cell * houghInterval) + (row - centerY) * sin(cell * houghInterval)).toInt() + maxLength // start from zero, not (-max_length)                  从零开始，不是（-max_length）
+                    if (max < 0 || max >= 2 * maxLength) {// make sure r did not out of scope[0, 2*max_lenght] 确保R不超出[0, 2*max_lenght]范围
                         continue
                     }
-                    hough2d!![cell][max] += 1
+                    hough2d!![cell][max]++
                 }
             }
         }
 
-        // find the max hough value
+        // find the max hough value  求最大hough值
         var maxHough = 0
         for (i in 0 until houghSpace) {
             for (j in 0 until 2 * maxLength) {
-                hough1d!![i + j * houghSpace] = hough2d!![i][j]
                 if (hough2d!![i][j] > maxHough) {
                     maxHough = hough2d!![i][j]
                 }
@@ -91,13 +86,15 @@ class HoughLineFilter {
         }
         println("MAX HOUGH VALUE = $maxHough")
 
+        var line =
+            mutableMapOf<Double, MutableMap<Int, MutableSet<Int>>>()
+
         // transfer back to image pixels space from hough parameter space
         val houghThreshold = (threshold * maxHough).toInt()
         for (row in 0 until houghSpace) {
             for (col in 0 until 2 * maxLength) {
-                if (hough2d!![row][col] < houghThreshold)
-                // discard it
-                    continue
+                if (hough2d!![row][col] < houghThreshold) continue
+                // discard it 丢弃它
                 val houghValue = hough2d!![row][col]
                 var isLine = true
                 for (i in -1..1) {
@@ -105,8 +102,7 @@ class HoughLineFilter {
                         if (i != 0 || j != 0) {
                             var yf = row + i
                             val xf = col + j
-                            if (xf < 0) continue
-                            if (xf < 2 * maxLength) {
+                            if (0 < xf && xf < 2 * maxLength) {
                                 if (yf < 0) {
                                     yf += houghSpace
                                 }
@@ -124,33 +120,119 @@ class HoughLineFilter {
                 }
                 if (!isLine) continue
 
-                // transform back to pixel data now...
                 val dy = sin(row * houghInterval)
-                val dx = cos(row * houghInterval)
-                if (row <= houghSpace / 4 || row >= 3 * houghSpace / 4) {
-                    for (subRow in 0 until height) {
-                        val subCol =
-                            ((col.toDouble() - maxLength.toDouble() - (subRow - centerY) * dy) / dx).toInt() + centerX
-                        if (subCol in 0 until width) {
-                            image2d[subRow][subCol] = -16776961
-                        }
+
+                if (line.containsKey(dy)) {
+                    val value = line.getValue(dy)
+                    if (value.containsKey(row)) {
+                        value[row]?.add(col)
+                    } else {
+                        var set = mutableSetOf<Int>()
+                        set.add(col)
+                        value[row] = set
                     }
                 } else {
-                    for (subCol in 0 until width) {
-                        val subRow =
-                            ((col.toDouble() - maxLength.toDouble() - (subCol - centerX) * dx) / dy).toInt() + centerY
-                        if (subRow in 0 until height) {
-                            image2d[subRow][subCol] = -16776961
-                        }
-                    }
+                    var set = mutableSetOf<Int>()
+                    set.add(col)
+                    var map = mutableMapOf<Int, MutableSet<Int>>()
+                    map[row] = set
+                    line[dy] = map
                 }
+
+                //println("row = $row col = $col dy = $dy dx = $dx")
+
             }
         }
 
-        // convert to hough 1D and return result
-        for (i in this.hough1d!!.indices) {
-            val value = clamp((scale * this.hough1d!![i] + offset).toInt()) // scale always equals 1
-            this.hough1d!![i] = -0x1000000 or value + (value shl 16) + (value shl 8)
+        val result = mutableSetOf<Line>()
+
+        line.map { m ->
+
+            m.value.map { mm ->
+                var maxHough = hough2d!![mm.key][mm.value.elementAt(0)]
+                var row = mm.key
+                var col = mm.value.elementAt(0)
+                mm.value.forEach {
+                    var hough = hough2d!![mm.key][it]
+                    if (maxHough < hough) {
+                        col = it
+                    }
+                }
+                result.add(Line(row, col))
+            }
+        }
+
+        result.sortedBy { it.row }.forEach {  }
+
+        result.forEach {
+            println("row:${it.row} col:${it.col}")
+        }
+
+        var temp = mutableSetOf<Line>()
+
+        var tResult = mutableSetOf<Line>()
+
+        var i = 0
+        var e = 0
+        while (i < result.size-1) {
+            temp.add(result.elementAt(i))
+
+            for (j in i + 1 until result.size) {
+                //println("j:$j")
+                if (isAdjacent(result.elementAt(i), result.elementAt(j))) {
+                    println("add")
+                    temp.add(result.elementAt(j))
+                    e = j
+                } else {
+                    i = j
+                    break
+                }
+            }
+            val line = temp.elementAt(0)
+            var row = line.row
+            var col = line.col
+            var maxHough = hough2d!![row][col]
+
+            temp.forEach {
+                var hough = hough2d!![it.row][it.col]
+                if (maxHough < hough) {
+                    var row = it.row
+                    var col = it.col
+                }
+            }
+            temp.clear()
+            println("result add row:$row col:$col")
+            tResult.add(Line(row, col))
+            if (e == result.size - 1) {
+                break
+            }
+        }
+
+
+
+        tResult.forEach {
+            val dy = sin(it.row * houghInterval)
+            val dx = cos(it.row * houghInterval)
+
+            println("row = ${it.row} col = ${it.col} dy = $dy dx = $dx")
+
+            if (it.row <= houghSpace / 4 || it.row >= 3 * houghSpace / 4) {
+                for (subRow in 0 until height) {
+                    val subCol =
+                        ((it.col.toDouble() - maxLength.toDouble() - (subRow - centerY) * dy) / dx).toInt() + centerX
+                    if (subCol in 0 until width) {
+                        image2d[subRow][subCol] = -16776961
+                    }
+                }
+            } else {
+                for (subCol in 0 until width) {
+                    val subRow =
+                        ((it.col.toDouble() - maxLength.toDouble() - (subCol - centerX) * dx) / dy).toInt() + centerY
+                    if (subRow in 0 until height) {
+                        image2d[subRow][subCol] = -16776961
+                    }
+                }
+            }
         }
 
         // convert to image 1D and return
@@ -159,6 +241,19 @@ class HoughLineFilter {
                 outPixels[col + row * width] = image2d[row][col]
             }
         }
+    }
+
+    private fun isAdjacent(a: Line, b: Line): Boolean {
+        for (i in -3..3) {
+            for (j in -3..3) {
+                if (i != 0 || j != 0) {
+                    if (a.row + i == b.row && a.col + j == b.col) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
 
     private fun convert1Dto2D(pixels: IntArray): Array<IntArray> {
@@ -172,19 +267,4 @@ class HoughLineFilter {
         }
         return image2d
     }
-
-    companion object {
-        const val PI_VALUE = Math.PI
-
-        fun clamp(value: Int): Int {
-            var value = value
-            if (value < 0)
-                value = 0
-            else if (value > 255) {
-                value = 255
-            }
-            return value
-        }
-    }
-
 }

@@ -14,6 +14,8 @@ fun main() {
 
     val houghLineFilter= HoughLineFilter()
 
+    //val houghTransform=HoughTransform()
+
     val jf = JFrame()
     val fd = FileDialog(jf,"选择图片")
     fd.show()
@@ -22,6 +24,8 @@ fun main() {
 
     //val resulting = houghLine.hough(img)
     val resulting = houghLineFilter.filter(img)
+
+    //houghTransform.linesDetectorHough(img)
 
     val output = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_BGR)
     output.createGraphics().drawImage(resulting, 0, 0, null)

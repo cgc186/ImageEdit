@@ -74,7 +74,7 @@ class EdgeDetection {
                 if (result > GMax) result = 255
                 if (result <= GMax) result = 0
                 image.setRGB(x, y, Color(result, result, result).rgb)
-                println(result)
+
             }
         }
         return image
