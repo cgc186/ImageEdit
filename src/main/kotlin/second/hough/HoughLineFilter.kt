@@ -13,9 +13,9 @@ class HoughLineFilter {
     private var width: Int = 0
     private var height: Int = 0
 
-    val threshold: Float = 0.7f
+    val threshold: Float = 0.7f  //0.5f
 
-    var size = 6
+    var size = 6  //30
 
     class Line(var theta: Int, var r: Int)
 

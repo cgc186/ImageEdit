@@ -11,7 +11,7 @@ class EdgeDetection {
     private fun toGray(img: BufferedImage): BufferedImage {
         val image = BufferedImage(img.width, img.height, Image.SCALE_DEFAULT)
 
-        var data = img.getRGB(0, 0, img.width, img.height, null, 0, img.width);
+        var data = img.getRGB(0, 0, img.width, img.height, null, 0, img.width)
         for (y in 0 until img.height) {
             for (x in 0 until img.width) {
                 val c = data[x + y * img.width]
@@ -21,7 +21,7 @@ class EdgeDetection {
                 data[x + y * img.width] = (0.21f * r + 0.70f * g + 0.07f * b).toInt() //to gray
             }
         }
-        image.setRGB(0, 0, img.width, img.height, data, 0, img.width);
+        image.setRGB(0, 0, img.width, img.height, data, 0, img.width)
         return image
     }
 

@@ -14,7 +14,7 @@ class HoughLineFilter2 {
     private var height: Int = 0
 
     val threshold: Float = 0.30f  //默认hough变换参数
-    val size = 50
+    val size = 50  //取最优值检测参数
 
     class Line(var theta: Int, var r: Int)
 
@@ -33,7 +33,7 @@ class HoughLineFilter2 {
     }
 
     private fun houghTransform(inPixels: IntArray, outPixels: IntArray) {
-        // prepare for hough transform
+        // 准备开始Hough变换
         val centerX = width / 2
         val centerY = height / 2
         val houghInterval = Math.PI / houghSpace.toDouble()
@@ -55,7 +55,8 @@ class HoughLineFilter2 {
                 // r = x * cos(theta) + y * sin(theta)
                 for (cell in 0 until houghSpace) {
                     max =
-                        ((col - centerX) * cos(cell * houghInterval) + (row - centerY) * sin(cell * houghInterval)).toInt() + maxLength // 从零开始，不是（-max_length）
+                        ((col - centerX) * cos(cell * houghInterval) + (row - centerY) *
+                                sin(cell * houghInterval)).toInt() + maxLength // 从零开始，不是（-max_length）
                     if (max < 0 || max >= 2 * maxLength) {// 确保R不超出[0, 2*max_lenght]范围
                         continue
                     }
@@ -88,9 +89,9 @@ class HoughLineFilter2 {
                 result.add(Line(row, col))
             }
         }
-
+        //用来保存临时线段数据
         var temp = mutableSetOf<Line>()
-
+        //经过筛选的结果集
         var tResult = mutableSetOf<Line>()
 
         var i = 0
