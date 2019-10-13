@@ -1,4 +1,0 @@
-package bow
-
-class Sift {
-}

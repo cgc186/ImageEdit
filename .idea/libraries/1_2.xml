@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="1.2">
+    <CLASSES>
+      <root url="file://$MAVEN_REPOSITORY$/com/alibaba/simpleimage.analyze/1.2.0" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$MAVEN_REPOSITORY$/com/alibaba/simpleimage.analyze/1.2.0" />
+    </SOURCES>
+    <jarDirectory url="file://$MAVEN_REPOSITORY$/com/alibaba/simpleimage.analyze/1.2.0" recursive="false" />
+    <jarDirectory url="file://$MAVEN_REPOSITORY$/com/alibaba/simpleimage.analyze/1.2.0" recursive="false" type="SOURCES" />
+  </library>
+</component>
