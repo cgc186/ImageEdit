@@ -2,6 +2,7 @@ package bow.model
 
 import com.alibaba.simpleimage.analyze.sift.scale.KDFeaturePoint
 import java.io.Serializable
+import java.lang.Math.pow
 import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt

@@ -126,7 +126,8 @@ abstract class KDTree<T>(private val _dimensions: Int) {
 
     internal abstract fun pointDist(arr: DoubleArray, location: DoubleArray, index: Int): Double
 
-    class Euclidean<T>(dims: Int) : KDTree<T>(dims) {
+    open class Euclidean<T>(dims: Int) : KDTree<T>(dims) {
+
 
         override fun pointRectDist(offset: Int, location: DoubleArray): Double {
             var offset = offset
