@@ -1,5 +1,6 @@
 package first.gaussian
 
+import first.gaussian.Gaussian
 import java.io.File
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
