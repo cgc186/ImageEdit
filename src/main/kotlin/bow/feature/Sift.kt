@@ -5,7 +5,9 @@ import com.alibaba.simpleimage.analyze.sift.IPixelConverter
 import com.alibaba.simpleimage.analyze.sift.SIFT
 import com.alibaba.simpleimage.analyze.sift.render.RenderImage
 import java.awt.image.BufferedImage
+import java.io.File
 import java.util.ArrayList
+import javax.imageio.ImageIO
 
 class Sift {
 
@@ -13,8 +15,9 @@ class Sift {
         return IPixelConverter { r, g, b -> (r + g + b).toFloat() / 255f / 3f }
     }
 
-    fun getFeatures(img: BufferedImage): ArrayList<Feature> {
-        val rImag = RenderImage(img)
+    fun getFeatures(img: String): ArrayList<Feature> {
+        val `in` = ImageIO.read(File(img))
+        val rImag = RenderImage(`in`)
 
         val pixels = rImag.toPixelFloatArray(getPixelConverter())
         val sift = SIFT()
