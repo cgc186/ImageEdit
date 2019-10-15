@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream
 /**
  * 序列化辅助类
  */
-class SerializationUtils {
+object SerializationUtils {
     /* dump object to output file */
     @Throws(Exception::class)
     fun dumpObject(output: String, obj: Any) {

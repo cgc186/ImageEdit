@@ -10,7 +10,7 @@ class ClusterResult {
 
     private var belongs: IntArray? = null
 
-    constructor(centroids: MutableList<Feature>, belongs: List<IntArray>) {
+    constructor(centroids: MutableList<Feature>, belongs: IntArray) {
         this.centroids = centroids
         this.belongs = belongs
     }
