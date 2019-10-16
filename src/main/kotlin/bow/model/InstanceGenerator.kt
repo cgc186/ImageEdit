@@ -18,7 +18,7 @@ class InstanceGenerator {
 
     constructor()
 
-    constructor(categories: StringArray) {
+    constructor(categories: Array<String>) {
         this.categories = categories
     }
 

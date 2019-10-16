@@ -32,7 +32,7 @@ class Validate {
     }
 
     fun validate(
-        imgBase: String, validateCategories: StringArray,
+        imgBase: String, validateCategories: Array<String>,
         start: Int, end: Int, inputModel: String
     ) {
         instanceGenerator = InstanceGenerator(validateCategories)
