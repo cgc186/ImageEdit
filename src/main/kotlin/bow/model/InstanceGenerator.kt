@@ -2,6 +2,7 @@ package bow.model
 
 import bow.cluster.KMeansCluster
 import bow.feature.Sift
+import com.sun.xml.internal.fastinfoset.util.StringArray
 import java.io.*
 
 class InstanceGenerator {
@@ -17,7 +18,7 @@ class InstanceGenerator {
 
     constructor()
 
-    constructor(categories: Array<String>) {
+    constructor(categories: StringArray) {
         this.categories = categories
     }
 

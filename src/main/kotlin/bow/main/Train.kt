@@ -1,5 +1,6 @@
 package bow.main
 
+import bow.model.Feature
 import bow.model.Instance
 import bow.model.InstanceGenerator
 import bow.model.Model
@@ -30,7 +31,8 @@ class Train{
         val words = trainResult.getWords()
         val classifier: Classifier = ClassifyUtils.loadClassifier(outputClassifier)
         val model =
-            Model(categories.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(), words, classifier)
+            Model(categories.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
+                words as MutableList<Feature>, classifier)
         SerializationUtils.dumpObject(outputModel, model)
         println("model saved as $outputModel")
     }
