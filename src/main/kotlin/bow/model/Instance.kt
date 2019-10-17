@@ -1,7 +1,9 @@
 package bow.model
 
 import java.util.*
-
+/**
+ * 单个图像样本的描述
+ */
 class Instance {
     /* 图像文件名 */
     private var image: String? = null

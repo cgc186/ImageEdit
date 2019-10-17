@@ -1,5 +1,7 @@
 package bow.model
-
+/**
+ * 训练结果的描述
+ */
 class TrainResult {
     /* 样本列表 */
     private var instances: List<Instance>? = null

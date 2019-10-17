@@ -4,7 +4,9 @@ import bow.cluster.KMeansCluster
 import bow.feature.Sift
 import com.sun.xml.internal.fastinfoset.util.StringArray
 import java.io.*
-
+/**
+ * 图像样本生成类
+ */
 class InstanceGenerator {
 
     /* 词典大小, 也是 K-Means 聚类得到的类别数量 */

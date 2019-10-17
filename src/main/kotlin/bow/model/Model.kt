@@ -5,8 +5,6 @@ import java.io.Serializable
 
 /**
  * 训练好的分类器模型描述
- *
- * @author tess3ract <hty0807></hty0807>@gmail.com>
  */
 class Model(/* 分类器包含的类别 */
     var categories: Array<String>, /* 词典 */

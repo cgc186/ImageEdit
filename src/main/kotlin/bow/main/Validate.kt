@@ -5,9 +5,10 @@ import bow.model.InstanceGenerator
 import bow.model.Model
 import bow.util.ClassifyUtils
 import bow.util.SerializationUtils
-import com.sun.xml.internal.fastinfoset.util.StringArray
 import weka.classifiers.Classifier
-
+/**
+ * 评估程序入口
+ */
 class Validate {
     private var instanceGenerator: InstanceGenerator? = null
 

@@ -9,9 +9,12 @@ import bow.util.SerializationUtils
 import weka.classifiers.Classifier
 import weka.classifiers.functions.MultilayerPerceptron
 
-class Train{
-    fun train(){
-        val imgBase = ""
+/**
+ * 训练程序入口
+ */
+object Train {
+    fun train() {
+        val imgBase = "E:\\编程\\kotlin\\images\\training"
         val categories = ""
         val cateSample = 1
         val outputArff = ""
@@ -31,13 +34,15 @@ class Train{
         val words = trainResult.getWords()
         val classifier: Classifier = ClassifyUtils.loadClassifier(outputClassifier)
         val model =
-            Model(categories.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                words as MutableList<Feature>, classifier)
+            Model(
+                categories.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
+                words as MutableList<Feature>, classifier
+            )
         SerializationUtils.dumpObject(outputModel, model)
         println("model saved as $outputModel")
     }
 }
 
 fun main() {
-
+    Train.train()
 }

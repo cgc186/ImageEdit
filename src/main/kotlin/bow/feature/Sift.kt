@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.util.ArrayList
 import javax.imageio.ImageIO
-
+/**
+ * SIFT特征提取实现
+ */
 class Sift {
 
     private fun getPixelConverter(): IPixelConverter {

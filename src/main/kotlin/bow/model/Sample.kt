@@ -1,5 +1,7 @@
 package bow.model
-
+/**
+ * 样本文件描述
+ */
 class Sample {
     /* 路径 */
     private var path: String? = null

@@ -1,7 +1,9 @@
 package bow.util
 
 import bow.model.Feature
-
+/**
+ * 特征向量树 (KDTree)
+ */
 class FeatureTree :KDTree.Euclidean<Int>{
     constructor() : super(Feature.DIMENSION)
 
