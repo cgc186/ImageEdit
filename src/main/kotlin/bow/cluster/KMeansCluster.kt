@@ -52,6 +52,6 @@ class KMeansCluster : Cluster {
                 break
             }
         }
-        return ClusterResult(centroids, listOf(belongs))
+        return ClusterResult(centroids, belongs)
     }
 }

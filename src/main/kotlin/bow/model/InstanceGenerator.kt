@@ -32,7 +32,7 @@ class InstanceGenerator {
         categories?.forEach { cate ->
             var count = 0
             val dir = File(base + File.separator + cate)
-            val files = dir.listFiles() ?: throw IOException("cannot find category $cate")
+            val files = dir.listFiles() ?: throw  IOException("cannot find category $cate")
             for (i in files.indices) {
                 if (!files[i].isDirectory
                     && files[i].name.contains(".jpg")
