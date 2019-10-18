@@ -9,34 +9,42 @@ import bow.util.SerializationUtils
 import weka.classifiers.Classifier
 import weka.classifiers.functions.MultilayerPerceptron
 
+
 /**
  * 训练程序入口
  */
 object Train {
-    fun train() {
-        val imgBase = "E:\\编程\\kotlin\\images\\training"
-        val categories = ""
-        val cateSample = 1
-        val outputArff = ""
-        val outputClassifier = ""
-        val outputModel = ""
-        val instanceGenerator = InstanceGenerator(
-            categories.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        )
+    fun train(
+        imgBase: String,
+        categories: Array<String>,
+        cateSample: Int,
+        outputArff: String,
+        outputClassifier: String,
+        outputModel: String
+    ) {
+        //图像样本生成
+        val instanceGenerator = InstanceGenerator(categories)
+        //训练结果
         val trainResult = instanceGenerator.train(imgBase, cateSample)
+        //实例
         val instances = trainResult.getInstances()
+
         println("dumping arff to $outputArff")
+        //保存到...
         instanceGenerator.dumpArff(instances as ArrayList<Instance>, outputArff)
+        //使用mlp运行交叉验证
         println("running cross-validation using MLP")
+
         val arguments = ("-t " + outputArff + " -d " + outputClassifier
                 + " -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a")
+
+        //对实例进行分类
         MultilayerPerceptron.main(arguments.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
         val words = trainResult.getWords()
         val classifier: Classifier = ClassifyUtils.loadClassifier(outputClassifier)
         val model =
             Model(
-                categories.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(),
-                words as MutableList<Feature>, classifier
+                categories, words as MutableList<Feature>, classifier
             )
         SerializationUtils.dumpObject(outputModel, model)
         println("model saved as $outputModel")
@@ -44,5 +52,5 @@ object Train {
 }
 
 fun main() {
-    Train.train()
+
 }

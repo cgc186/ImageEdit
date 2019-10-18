@@ -9,7 +9,7 @@ import weka.classifiers.Classifier
 /**
  * 评估程序入口
  */
-class Validate {
+object Validate {
     private var instanceGenerator: InstanceGenerator? = null
 
     private val featureMaker = Sift()
@@ -61,4 +61,14 @@ class Validate {
         }
         println("Precision: " + (correct.toDouble() / samples.size))
     }
+}
+
+fun main() {
+    val imgBase = "E:\\编程\\kotlin\\images\\training"
+    //验证类别
+    val validateCategories = arrayOf("Phoning", "PlayingGuitar", "RidingBike", "RidingHorse", "Running", "Shooting")
+
+    val inputModel = ""
+
+    Validate.validate(imgBase,validateCategories,0,80,inputModel)
 }
