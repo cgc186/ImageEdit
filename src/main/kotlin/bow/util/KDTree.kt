@@ -231,13 +231,13 @@ abstract class KDTree<T>(private val _dimensions: Int) {
             }
         }
 
-        // uses O(log(n)) comparisons and one big shift of size O(N)
-        // and is MUCH simpler than a heap --> faster on small sets, faster JIT
+        // uses O(log(n)) comparisons and one big shift of size O(N)            使用o（log（n））比较和大小o（n）的一个大偏移
+        // and is MUCH simpler than a heap --> faster on small sets, faster JIT 而且比堆简单得多-->在小集合上更快，JIT更快
 
         internal fun addNoGrow(value: S, priority: Double) {
             val index = searchFor(priority)
             val nextIndex = index + 1
-            val length = size - index - 1// remove dependancy on nextIndex
+            val length = size - index - 1// remove dependancy on nextIndex 消除对NextIndex的依赖
             System.arraycopy(elements, index, elements, nextIndex, length)
             System.arraycopy(priorities, index, priorities, nextIndex, length)
             elements?.set(index, value!!)

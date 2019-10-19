@@ -29,15 +29,23 @@ class InstanceGenerator {
      */
     fun getSamples(base: String, start: Int, end: Int): ArrayList<Sample> {
         val samples = java.util.ArrayList<Sample>()
+        //类别
         categories?.forEach { cate ->
             var count = 0
             val dir = File(base + File.separator + cate)
+            //val dir = File("$base//$cate")
+            //println("$dir")
             val files = dir.listFiles() ?: throw  IOException("cannot find category $cate")
             for (i in files.indices) {
+
+                //println(files[i])
+
                 if (!files[i].isDirectory
                     && files[i].name.contains(".jpg")
                 ) {
+                    count++
                     if (count > start) {
+                        //println("1")
                         samples.add(Sample(files[i].absolutePath, cate))
                     }
                     if (count >= end) {
@@ -55,7 +63,7 @@ class InstanceGenerator {
      * @return
      * @throws IOException
      */
-    fun getFeatures(samples: ArrayList<Sample>): MutableMap<String, MutableList<Feature>> {
+    private fun getFeatures(samples: ArrayList<Sample>): MutableMap<String, MutableList<Feature>> {
         val bow = ArrayList<Feature>()
         val allFeatures = mutableMapOf<String, MutableList<Feature>>()
         samples.forEach { sample ->
@@ -128,9 +136,16 @@ class InstanceGenerator {
      * @throws Exception
      */
     fun train(imgBase: String, cateSample: Int): TrainResult {
+        //获取样本
         var samples = getSamples(imgBase, 0, cateSample)
+
+        println("样本数量:${samples.size}")
+
+        //根据样本文件列表生成特征点向量的列表
         var allFeatures = getFeatures(samples)
+
         var bow = allFeatures["bow"]
+
         var dict = bow?.let { calcDict(it) }
         var instances = ArrayList<Instance>()
         samples.forEach { sample ->
