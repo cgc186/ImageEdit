@@ -35,7 +35,7 @@ class InstanceGenerator {
             val dir = File(base + File.separator + cate)
             //val dir = File("$base//$cate")
             //println("$dir")
-            val files = dir.listFiles() ?: throw  IOException("cannot find category $cate")
+            val files = dir.listFiles() ?: throw  IOException("cannot find category $cate") as Throwable
             for (i in files.indices) {
 
                 //println(files[i])
@@ -148,12 +148,7 @@ class InstanceGenerator {
 
         var dict = bow?.let { calcDict(it) }
         var instances = ArrayList<Instance>()
-        samples.forEach { sample ->
-            var features = allFeatures[sample.getPath()]
-            if (features == null) {
 
-            }
-        }
         for (sample in samples) {
             val features = allFeatures[sample.getPath()] ?: continue
             val instance = getInstance(features, dict!!)

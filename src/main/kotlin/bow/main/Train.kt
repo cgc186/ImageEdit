@@ -51,6 +51,3 @@ object Train {
     }
 }
 
-fun main() {
-
-}

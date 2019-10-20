@@ -1,10 +1,12 @@
 package bow.util
 
 import bow.model.Feature
+import util.KDTree
+
 /**
  * 特征向量树 (KDTree)
  */
-class FeatureTree :KDTree.Euclidean<Int>{
+class FeatureTree : KDTree.Euclidean<Int> {
     constructor() : super(Feature.DIMENSION)
 
     private fun getValue(feature: Feature): DoubleArray {
@@ -20,7 +22,14 @@ class FeatureTree :KDTree.Euclidean<Int>{
         this.addPoint(getValue(feature), payload)
     }
 
-    fun queryNearest(feature: Feature): Int? {
-        return this.nearestNeighbours(getValue(feature), 1)[0].payload
+    /**
+     * Description:查询最近的
+     */
+    fun queryNearest(feature: Feature): Int {
+        val t = this.nearestNeighbours(
+            getValue(feature),
+            1
+        )[0]
+        return t.payload
     }
 }

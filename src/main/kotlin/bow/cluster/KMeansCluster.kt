@@ -8,7 +8,7 @@ import kotlin.collections.ArrayList
 
 class KMeansCluster : Cluster {
     /* 误差阈值 */
-    private val ERROR_THRESHOLD = 1.2
+    private val ERROR_THRESHOLD = 1.2f
 
     override fun getSets(features: List<Feature>, partition: Int): ClusterResult {
         var centroids = mutableListOf<Feature>()
@@ -22,7 +22,10 @@ class KMeansCluster : Cluster {
             centroids.add(pool[index])
             pool.removeAt(index)
         }
+        var index = 1
         while (true) {
+            println(index)
+            index++
             val elements = mutableMapOf<Int, MutableList<Feature>>()
             for (i in 0 until partition) {
                 elements[i] = mutableListOf<Feature>()
@@ -33,7 +36,7 @@ class KMeansCluster : Cluster {
             }
             for (i in features.indices) {
                 val f = features[i]
-                belongs[i] = tree.queryNearest(f)!!
+                belongs[i] = tree.queryNearest(f)
                 elements[belongs[i]]?.add(f)
             }
             var error = 0.0
