@@ -4,14 +4,10 @@ package bow.model
  */
 class Sample {
     /* 路径 */
-    private var path: String? = null
+    var path: String = ""
 
     /* 分类标注 */
-    private var category: String? = null
-
-    constructor(){
-
-    }
+    var category: String = ""
 
     constructor(path: String) {
         this.path = path
@@ -20,36 +16,6 @@ class Sample {
     constructor(path: String, cate: String) {
         this.path = path
         this.category = cate
-    }
-
-    /**
-     * @return the path
-     */
-    fun getPath(): String? {
-        return path
-    }
-
-    /**
-     * @param path
-     * the path to set
-     */
-    fun setPath(path: String) {
-        this.path = path
-    }
-
-    /**
-     * @return the category
-     */
-    fun getCategory(): String? {
-        return category
-    }
-
-    /**
-     * @param category
-     * the category to set
-     */
-    fun setCategory(category: String) {
-        this.category = category
     }
 
     /*

@@ -13,26 +13,13 @@ import kotlin.math.sqrt
 class Feature : Serializable {
 
     companion object {
-
         private const val serialVersionUID = -4432933599973324376L
-
         /* 特征维数 */
         val DIMENSION = 128
     }
 
     /* 特征向量的值 */
-    /**
-     * @return the values
-     */
-    /**
-     * @param values
-     * the values to set
-     */
-    var values: IntArray? = null
-
-    constructor() {
-
-    }
+    var values: IntArray
 
     constructor(point: KDFeaturePoint) {
         values = point.descriptor
@@ -43,7 +30,7 @@ class Feature : Serializable {
         if (isRandom) {
             val random = Random()
             for (i in 0 until DIMENSION) {
-                values!![i] = random.nextInt(255)
+                values[i] = random.nextInt(255)
             }
         }
     }
@@ -86,7 +73,7 @@ class Feature : Serializable {
             return
         }
         for (i in 0 until DIMENSION) {
-            values!![i] /= x
+            values[i] /= x
         }
     }
 

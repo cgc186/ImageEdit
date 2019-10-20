@@ -17,7 +17,7 @@ class Classify {
         val classifier = model.classifier
         val categories = model.categories
         val instanceGenerator = InstanceGenerator()
-        val features = featureMaker.getFeatures(inputImg)
+        val features = featureMaker.getFeature(inputImg)
         val instance = instanceGenerator.getInstance(
             features,
             model.words

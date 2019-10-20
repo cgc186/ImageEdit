@@ -27,11 +27,11 @@ object Train {
         //训练结果
         val trainResult = instanceGenerator.train(imgBase, cateSample)
         //实例
-        val instances = trainResult.getInstances()
-
+        val instances = trainResult.instances
         println("dumping arff to $outputArff")
         //保存到...
-        instanceGenerator.dumpArff(instances as ArrayList<Instance>, outputArff)
+
+        instanceGenerator.dumpArff(instances, outputArff)
         //使用mlp运行交叉验证
         println("running cross-validation using MLP")
 
@@ -40,7 +40,7 @@ object Train {
 
         //对实例进行分类
         MultilayerPerceptron.main(arguments.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        val words = trainResult.getWords()
+        val words = trainResult.words
         val classifier: Classifier = ClassifyUtils.loadClassifier(outputClassifier)
         val model =
             Model(
@@ -50,4 +50,3 @@ object Train {
         println("model saved as $outputModel")
     }
 }
-

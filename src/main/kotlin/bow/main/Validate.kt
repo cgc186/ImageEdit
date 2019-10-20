@@ -20,7 +20,7 @@ object Validate {
 
     @Throws(Exception::class)
     private fun getCategory(categories: Array<String>, image: String): String {
-        val features = featureMaker.getFeatures(image)
+        val features = featureMaker.getFeature(image)
         val instance = instanceGenerator!!.getInstance(
             features,
             model!!.words
@@ -43,18 +43,18 @@ object Validate {
             .getSamples(imgBase, start, end)
         var correct = 0
         for (sample in samples) {
-            val category = sample.getPath()?.let {
+            val category = sample.path?.let {
                 getCategory(
                     model.categories,
                     it
                 )
             }
-            if (sample.getCategory().equals(category)) {
+            if (sample.category == category) {
                 correct++
-                println("POSITIVE: " + sample.getPath())
+                println("POSITIVE: " + sample.path)
             } else {
                 println(
-                    "NEGATIVE: " + sample.getPath()
+                    "NEGATIVE: " + sample.path
                             + " -> false " + category
                 )
             }

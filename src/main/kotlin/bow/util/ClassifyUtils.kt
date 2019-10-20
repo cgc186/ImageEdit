@@ -14,6 +14,6 @@ object ClassifyUtils {
     }
 
     fun getWekaInstance(instance: Instance): weka.core.Instance {
-        return SparseInstance(0.0, instance.getFreq())
+        return SparseInstance(0.0, instance.freq)
     }
 }

@@ -17,7 +17,7 @@ class Sift {
         return IPixelConverter { r, g, b -> (r + g + b).toFloat() / 255f / 3f }
     }
 
-    fun getFeatures(img: String): ArrayList<Feature> {
+    fun getFeature(img: String): ArrayList<Feature> {
         val `in` = ImageIO.read(File(img))
         val rImag = RenderImage(`in`)
 

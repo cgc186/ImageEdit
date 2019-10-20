@@ -2,8 +2,9 @@ package bow.model
 
 import bow.cluster.KMeansCluster
 import bow.feature.Sift
-import com.sun.xml.internal.fastinfoset.util.StringArray
 import java.io.*
+import java.util.HashMap
+
 /**
  * 图像样本生成类
  */
@@ -33,13 +34,9 @@ class InstanceGenerator {
         categories?.forEach { cate ->
             var count = 0
             val dir = File(base + File.separator + cate)
-            //val dir = File("$base//$cate")
-            //println("$dir")
-            val files = dir.listFiles() ?: throw  IOException("cannot find category $cate") as Throwable
+            val files = dir.listFiles() ?: throw  IOException("cannot find category $cate")
             for (i in files.indices) {
-
                 //println(files[i])
-
                 if (!files[i].isDirectory
                     && files[i].name.contains(".jpg")
                 ) {
@@ -63,26 +60,30 @@ class InstanceGenerator {
      * @return
      * @throws IOException
      */
-    private fun getFeatures(samples: ArrayList<Sample>): MutableMap<String, MutableList<Feature>> {
-        val bow = ArrayList<Feature>()
-        val allFeatures = mutableMapOf<String, MutableList<Feature>>()
-        samples.forEach { sample ->
-            val key: String = sample.getPath().toString()
+    @Throws(IOException::class)
+    private fun getFeatures(samples: List<Sample>): Map<String, List<Feature>> {
+        val bow = java.util.ArrayList<Feature>()
+        val allFeatures = HashMap<String, List<Feature>>()
+        for (sample in samples) {
+            val key = sample.path
             println("generating feature from $key")
             try {
-                val features = featureMaker.getFeatures(key)
-                if (features == null || features.size == 0) {
+                val features = featureMaker.getFeature(key)
+                if (features.size == 0) {
                     throw Exception("no feature found")
                 }
                 bow.addAll(features)
                 allFeatures[key] = features
             } catch (e: Exception) {
                 System.err.println(
-                    "failed to sample " + key + ": " + e.message
+                    "failed to sample " + key + ": "
+                            + e.message
                 )
             }
+
         }
         allFeatures["bow"] = bow
+
         return allFeatures
     }
 
@@ -92,10 +93,10 @@ class InstanceGenerator {
      * @param bow
      * @return
      */
-    private fun calcDict(bow: MutableList<Feature>): MutableList<Feature>? {
+    private fun calcDict(bow: List<Feature>): List<Feature> {
         println("bow size: " + bow.size)
         val clusterResult = cluster.getSets(bow, PARTITION)
-        return clusterResult.getCentroids()
+        return clusterResult.centroids
     }
 
     /**
@@ -105,14 +106,14 @@ class InstanceGenerator {
      * @param dict
      * @return
      */
-    fun getInstance(features: MutableList<Feature>, dict: MutableList<Feature>): Instance {
+    fun getInstance(features: List<Feature>, dict: List<Feature>): Instance {
         val dictSize = dict.size
-        var counts = IntArray(dictSize)
+        val counts = IntArray(dictSize)
         for (i in features.indices) {
             var nearest = -1
             var nearestDist = java.lang.Double.MAX_VALUE
             for (j in 0 until dictSize) {
-                var dist = dict[j].distance(features[i])
+                val dist = dict[j].distance(features[i])
                 if (dist < nearestDist) {
                     nearestDist = dist
                     nearest = j
@@ -120,9 +121,9 @@ class InstanceGenerator {
             }
             counts[nearest]++
         }
-        var freq = DoubleArray(dictSize)
+        val freq = DoubleArray(dictSize)
         for (i in 0 until dictSize) {
-            freq[i] = (counts[i] / features.size).toDouble()
+            freq[i] = counts[i].toDouble() / features.size
         }
         return Instance(freq)
     }
@@ -138,7 +139,6 @@ class InstanceGenerator {
     fun train(imgBase: String, cateSample: Int): TrainResult {
         //获取样本
         var samples = getSamples(imgBase, 0, cateSample)
-
         println("样本数量:${samples.size}")
 
         //根据样本文件列表生成特征点向量的列表
@@ -146,20 +146,21 @@ class InstanceGenerator {
 
         var bow = allFeatures["bow"]
 
-        var dict = bow?.let { calcDict(it) }
+        var dict = calcDict(bow!!)
+
         var instances = ArrayList<Instance>()
 
         for (sample in samples) {
-            val features = allFeatures[sample.getPath()] ?: continue
-            val instance = getInstance(features, dict!!)
-            sample.getPath()?.let { instance.setImage(it) }
-            sample.getCategory()?.let { instance.setCategory(it) }
+            val features = allFeatures[sample.path] ?: continue
+            val instance = getInstance(features, dict)
+            instance.image = sample.path
+            instance.category = sample.category
             instances.add(instance)
         }
         return TrainResult(instances, dict)
     }
 
-    fun dumpArff(instances: ArrayList<Instance>, output: String) {
+    fun dumpArff(instances: List<Instance>, output: String) {
         val br = BufferedWriter(OutputStreamWriter(FileOutputStream(File(output))))
         br.write("@relation features\n")
         for (i in 0 until PARTITION) {
@@ -176,11 +177,11 @@ class InstanceGenerator {
         br.write("@data\n")
         for (instance in instances) {
             var tmp = ""
-            val freq = instance.getFreq()
+            val freq = instance.freq
             for (i in freq!!.indices) {
                 tmp += freq[i].toString() + ","
             }
-            tmp += instance.getCategory()
+            tmp += instance.category
             tmp += "\n"
             br.write(tmp)
         }
