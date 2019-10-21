@@ -39,12 +39,12 @@ object Train {
                 + " -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a")
 
         //对实例进行分类
-        MultilayerPerceptron.main(arguments.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        MultilayerPerceptron.main(arguments.split(" ").toTypedArray())
         val words = trainResult.words
         val classifier: Classifier = ClassifyUtils.loadClassifier(outputClassifier)
         val model =
             Model(
-                categories, words as MutableList<Feature>, classifier
+                categories, words, classifier
             )
         SerializationUtils.dumpObject(outputModel, model)
         println("model saved as $outputModel")
