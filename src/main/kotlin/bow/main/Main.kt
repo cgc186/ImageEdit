@@ -13,7 +13,7 @@ fun main() {
     //输出路径
     val outputArff = "E:\\编程\\kotlin\\images\\train.txt"
     //输出分类器
-    val outputClassifier = "E:\\编程\\kotlin\\images\\train.txt"
+    val outputClassifier = "E:\\编程\\kotlin\\images\\Classifier.txt"
     //输出模型
     val outputModel = "E:\\编程\\kotlin\\images\\outputModel.txt"
     Train.train(imgBase, categories, cateSample, outputArff, outputClassifier, outputModel)
