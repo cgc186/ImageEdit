@@ -91,5 +91,15 @@ class Features {
             storSvms.save(svmFilename)
         }
     }
+
+    fun categoryBySvm(){
+        println("物体分类开始..")
+        val grayPic = Mat()
+        val thresholdImage = Mat()
+        var predictionCategory = ""
+        var curConfidence = 0.0f
+        val TEST_FOLDER = ""
+
+    }
 }
 
