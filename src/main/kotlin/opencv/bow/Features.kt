@@ -1,17 +1,15 @@
 package opencv.bow
 
 import org.opencv.core.*
-import org.opencv.features2d.BOWKMeansTrainer
-import org.opencv.features2d.DescriptorExtractor
-import org.opencv.features2d.FeatureDetector
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.ml.SVM
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import org.opencv.core.Mat
-
-
+import org.opencv.imgproc.Imgproc
+import java.io.IOException
+import org.opencv.features2d.*
 
 
 class Features {
@@ -27,6 +25,13 @@ class Features {
 
     //类目名称，也就是TRAIN_FOLDER设置的目录名
     var category_name = mutableListOf<String>()
+    var featureDetector = FeatureDetector.create(categoriesSize)
+    val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
+
+    init {
+        var descriptorMacher = FlannBasedMatcher()
+        var bowDescriptorExtractor = BOWImgDescriptorExtractor()
+    }
 
     fun bulidVacab() {
         val image = Imgcodecs.imread("")
@@ -34,8 +39,7 @@ class Features {
         var vocabDescriptors: Mat = Mat()
         val kp = MatOfKeyPoint()
 
-        var featureDetector = FeatureDetector.create(categoriesSize)
-        val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
+        //var featureDetector = FeatureDetector.create(categoriesSize)
 
 
         trainSet.forEach {
@@ -74,32 +78,47 @@ class Features {
                 allsamples_bow[category_name[i]]!!.rows(),
                 1,
                 CvType.CV_32SC1,
-                Scalar.all(1.0))
+                Scalar.all(1.0)
+            )
             responses.push_back(posResponses)
 
-            allsamples_bow.forEach{
-                if (it.key == category_name[i]){
+            allsamples_bow.forEach {
+                if (it.key == category_name[i]) {
                     return@forEach
                 }
                 temSamples.push_back(it.value)
-                val response = Mat( it.value.rows(), 1, CvType.CV_32SC1, Scalar.all(-1.0) )
-                responses.push_back( response )
+                val response = Mat(it.value.rows(), 1, CvType.CV_32SC1, Scalar.all(-1.0))
+                responses.push_back(response)
             }
 
-            storSvms.train(temSamples,i,responses)
+            storSvms.train(temSamples, i, responses)
             val svmFilename = "D:/project data/data/" + category_name[i] + "SVM.xml"
             storSvms.save(svmFilename)
         }
     }
 
-    fun categoryBySvm(){
+    fun categoryBySvm() {
         println("物体分类开始..")
         val grayPic = Mat()
         val thresholdImage = Mat()
         var predictionCategory = ""
         var curConfidence = 0.0f
         val TEST_FOLDER = ""
-
+        val dir = File(TEST_FOLDER)
+        val files = dir.listFiles() ?: throw  IOException("cannot find category ")
+        for (i in files.indices) {
+            if (!files[i].isDirectory
+                && files[i].name.contains(".jpg")
+            ) {
+                println("${files[i]}")
+                var inputPic = Imgcodecs.imread(files[i].toString())
+                Imgproc.cvtColor(inputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
+                val kp = MatOfKeyPoint()
+                var test = Mat()
+                featureDetector.detect(grayPic,kp)
+                bowDescriptorExtractor.
+            }
+        }
     }
 }
 
