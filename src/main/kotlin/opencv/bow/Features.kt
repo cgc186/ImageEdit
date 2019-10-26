@@ -10,6 +10,10 @@ import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.io.IOException
 import org.opencv.features2d.*
+import org.opencv.core.Mat
+import org.opencv.core.Mat
+
+
 
 
 class Features {
@@ -25,10 +29,17 @@ class Features {
 
     //类目名称，也就是TRAIN_FOLDER设置的目录名
     var category_name = mutableListOf<String>()
+
+
     var featureDetector = FeatureDetector.create(categoriesSize)
     val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
 
+    var storSvms: SVM? = null
+
     init {
+        // 训练得到的SVM
+        var storSvms = SVM.create()
+
         var descriptorMacher = FlannBasedMatcher()
         var bowDescriptorExtractor = BOWImgDescriptorExtractor()
     }
@@ -115,8 +126,42 @@ class Features {
                 Imgproc.cvtColor(inputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
                 val kp = MatOfKeyPoint()
                 var test = Mat()
-                featureDetector.detect(grayPic,kp)
-                bowDescriptorExtractor.
+                featureDetector.detect(grayPic, kp)
+                //bowDescriptorExtractor.
+
+                var sign = 0
+                var bestScore = -2.0f
+
+                for (i in 0 until categoriesSize) {
+                    val cateName = category_name[i]
+                    val f_path = "D:/project data/data/" + cateName + "SVM.xml"
+                    //FileStorage svm_fs(f_path,FileStorage::READ);
+                    val svmFile = ImageIO.read(File(f_path))
+                    if (svmFile != null) {
+                        var stSvm = SVM.load(f_path)
+                        if (sign == 0) {
+                            val scoreValue = stSvm.predict(test, true)
+                            var classValue = stSvm.predict(test, false)
+                            sign = if (scoreValue < 0.0f == classValue < 0.0f) 1 else -1
+                        }
+                        curConfidence = sign * stSvm.predict(test, true);
+                    } else {
+                        if (sign == 0) {
+                            val scoreValue = storSvms.predict(test, true)
+                            val classValue = storSvms.predict(test, false)
+                            sign = if (scoreValue < 0.0f == classValue < 0.0f) 1 else -1
+                        }
+                    }
+
+                    if (curConfidence > bestScore) {
+                        bestScore = curConfidence
+                        predictionCategory = cateName
+                    }
+                }
+                var RESULT_FOLDER = "D:/project data/data/result_image/"
+                for (){
+
+                }
             }
         }
     }
