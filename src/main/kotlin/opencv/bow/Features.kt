@@ -10,38 +10,46 @@ import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 import java.io.IOException
 import org.opencv.features2d.*
-import org.opencv.core.Mat
-import org.opencv.core.Mat
-
-
+import org.opencv.imgcodecs.Imgcodecs.imwrite
+import org.opencv.highgui.HighGui.*
 
 
 class Features {
 
-    var categoriesSize = 11
 
-    var trainSet = mutableMapOf<String, Mat>()
+    private var categoriesSize = 0
 
-    val bowtrainer = BOWKMeansTrainer(categoriesSize)
+    private var trainSet = mutableMapOf<String, Mat>()
+
+    private val bowtrainer = BOWKMeansTrainer(categoriesSize)
 
     //存放所有训练图片的BOW
-    val allsamples_bow = mutableMapOf<String, Mat>()
+    private val allsamplesBow = mutableMapOf<String, Mat>()
 
     //类目名称，也就是TRAIN_FOLDER设置的目录名
-    var category_name = mutableListOf<String>()
+    private var categoryName = mutableListOf<String>()
 
 
-    var featureDetector = FeatureDetector.create(categoriesSize)
-    val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
+    private var featureDetector = FeatureDetector.create(categoriesSize)
+    private val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
 
     var storSvms: SVM? = null
 
+    private var resultObjects: MutableMap<String, Mat>? = null
+
     init {
+
+        //从类目名称到数据的map映射
+        var resultObjects = mutableMapOf<String, Mat>()
         // 训练得到的SVM
         var storSvms = SVM.create()
 
         var descriptorMacher = FlannBasedMatcher()
-        var bowDescriptorExtractor = BOWImgDescriptorExtractor()
+        //var bowDescriptorExtractor = BOWImgDescriptorExtractor()
+    }
+
+    constructor(categoriesSize: Int) {
+        this.categoriesSize = categoriesSize
     }
 
     fun bulidVacab() {
@@ -51,8 +59,6 @@ class Features {
         val kp = MatOfKeyPoint()
 
         //var featureDetector = FeatureDetector.create(categoriesSize)
-
-
         trainSet.forEach {
             var cateName = it.key
             var descriptors: Mat = Mat()
@@ -72,29 +78,29 @@ class Features {
     }
 
     fun trainSvm() {
-        var storSvms = SVM.create()
+        storSvms = SVM.create()
         //设置训练参数
-        storSvms.type = SVM.C_SVC
-        storSvms.setKernel(SVM.LINEAR)
-        storSvms.termCriteria = TermCriteria(1, 100, 1e-6)
+        storSvms!!.type = SVM.C_SVC
+        storSvms!!.setKernel(SVM.LINEAR)
+        storSvms!!.termCriteria = TermCriteria(1, 100, 1e-6)
         for (i in 0 until categoriesSize) {
             var temSamples = Mat(
                 0,
-                allsamples_bow[category_name[i]]!!.cols(),
-                allsamples_bow[category_name[i]]!!.type()
+                allsamplesBow[categoryName[i]]!!.cols(),
+                allsamplesBow[categoryName[i]]!!.type()
             )
             var responses = Mat(0, 1, CvType.CV_32SC1)
-            temSamples.push_back(allsamples_bow[category_name[i]])
+            temSamples.push_back(allsamplesBow[categoryName[i]])
             var posResponses = Mat(
-                allsamples_bow[category_name[i]]!!.rows(),
+                allsamplesBow[categoryName[i]]!!.rows(),
                 1,
                 CvType.CV_32SC1,
                 Scalar.all(1.0)
             )
             responses.push_back(posResponses)
 
-            allsamples_bow.forEach {
-                if (it.key == category_name[i]) {
+            allsamplesBow.forEach {
+                if (it.key == categoryName[i]) {
                     return@forEach
                 }
                 temSamples.push_back(it.value)
@@ -102,9 +108,9 @@ class Features {
                 responses.push_back(response)
             }
 
-            storSvms.train(temSamples, i, responses)
-            val svmFilename = "D:/project data/data/" + category_name[i] + "SVM.xml"
-            storSvms.save(svmFilename)
+            storSvms!!.train(temSamples, i, responses)
+            val svmFilename = "D:/project data/data/" + categoryName[i] + "SVM.xml"
+            storSvms!!.save(svmFilename)
         }
     }
 
@@ -113,17 +119,27 @@ class Features {
         val grayPic = Mat()
         val thresholdImage = Mat()
         var predictionCategory = ""
+
         var curConfidence = 0.0f
+
         val TEST_FOLDER = ""
+
         val dir = File(TEST_FOLDER)
+
         val files = dir.listFiles() ?: throw  IOException("cannot find category ")
         for (i in files.indices) {
             if (!files[i].isDirectory
                 && files[i].name.contains(".jpg")
             ) {
                 println("${files[i]}")
+
+                var trainPicName = files[i].toString()
+
+                //读取图片
                 var inputPic = Imgcodecs.imread(files[i].toString())
+
                 Imgproc.cvtColor(inputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
+
                 val kp = MatOfKeyPoint()
                 var test = Mat()
                 featureDetector.detect(grayPic, kp)
@@ -133,37 +149,54 @@ class Features {
                 var bestScore = -2.0f
 
                 for (i in 0 until categoriesSize) {
-                    val cateName = category_name[i]
+                    val cateName = categoryName[i]
                     val f_path = "D:/project data/data/" + cateName + "SVM.xml"
                     //FileStorage svm_fs(f_path,FileStorage::READ);
                     val svmFile = ImageIO.read(File(f_path))
                     if (svmFile != null) {
                         var stSvm = SVM.load(f_path)
                         if (sign == 0) {
-                            val scoreValue = stSvm.predict(test, true)
-                            var classValue = stSvm.predict(test, false)
-                            sign = if (scoreValue < 0.0f == classValue < 0.0f) 1 else -1
+                            //val scoreValue = stSvm.predict(test, true)
+                            //var classValue = stSvm.predict(test, false)
+                            //sign = if (scoreValue < 0.0f == classValue < 0.0f) 1 else -1
+                            val value = stSvm.predict(test)
+                            sign = if (value < 0.0f) 1 else -1
                         }
-                        curConfidence = sign * stSvm.predict(test, true);
+                        //curConfidence = sign * stSvm.predict(test, true);
+                        curConfidence = sign * stSvm.predict(test);
                     } else {
                         if (sign == 0) {
-                            val scoreValue = storSvms.predict(test, true)
-                            val classValue = storSvms.predict(test, false)
-                            sign = if (scoreValue < 0.0f == classValue < 0.0f) 1 else -1
+//                            val scoreValue = storSvms.predict(test, true)
+//                            val classValue = storSvms.predict(test, false)
+//                            sign = if (scoreValue < 0.0f == classValue < 0.0f) 1 else -1
+                            val value = storSvms!!.predict(test)
+                            sign = if (value < 0.0f) 1 else -1
                         }
+                        curConfidence = sign * storSvms!!.predict(test);
                     }
-
                     if (curConfidence > bestScore) {
                         bestScore = curConfidence
                         predictionCategory = cateName
                     }
                 }
                 var RESULT_FOLDER = "D:/project data/data/result_image/"
-                for (){
 
+                val files = dir.listFiles() ?: throw  IOException("cannot find category ")
+                for (i in files.indices) {
+                    //println(files[i])
+                    if (!files[i].isDirectory
+                        && files[i].name == predictionCategory
+                    ) {
+                        val filename = "$RESULT_FOLDER$predictionCategory/$trainPicName"
+                        imwrite(filename, inputPic)
+                    }
                 }
+                //显示输出
+                namedWindow("Dectect Object")
+                println("这张图属于：$predictionCategory")
+                imshow("Dectect Object", resultObjects?.get(predictionCategory))
+                waitKey(0)
             }
         }
     }
 }
-
