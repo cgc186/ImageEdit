@@ -23,5 +23,14 @@ import org.opencv.core.Scalar
 
 fun main() {
     val clusters = 1000
+    val b = Features(clusters)
 
+    //特征聚类
+    b.bulidVacab()
+    //构造BOW
+    b.computeBowImage()
+    //训练分类器
+    b.trainSvm()
+    //将测试图片分类
+    b.categoryBySvm()
 }

@@ -3,7 +3,6 @@ package opencv.bow
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.ml.SVM
-import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import org.opencv.core.Mat
@@ -12,13 +11,13 @@ import java.io.IOException
 import org.opencv.features2d.*
 import org.opencv.imgcodecs.Imgcodecs.imwrite
 import org.opencv.highgui.HighGui.*
+import javax.xml.parsers.DocumentBuilderFactory
 
 
 class Features {
 
-
     private var categoriesSize = 0
-
+    //从类目名称到训练图集的映射，关键字可以重复出现
     private var trainSet = mutableMapOf<String, Mat>()
 
     private val bowtrainer = BOWKMeansTrainer(categoriesSize)
@@ -29,7 +28,7 @@ class Features {
     //类目名称，也就是TRAIN_FOLDER设置的目录名
     private var categoryName = mutableListOf<String>()
 
-
+    //特征检测器detectors与描述子提取器extractors
     private var featureDetector = FeatureDetector.create(categoriesSize)
     private val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
 
@@ -48,10 +47,13 @@ class Features {
         //var bowDescriptorExtractor = BOWImgDescriptorExtractor()
     }
 
+    var DATA_FOLDER = "D:/project data/data/"
+
     constructor(categoriesSize: Int) {
         this.categoriesSize = categoriesSize
     }
 
+    // 聚类得出词典
     fun bulidVacab() {
         val image = Imgcodecs.imread("")
 
@@ -72,11 +74,20 @@ class Features {
         ImageIO.write(img, "jpg", File(""))
     }
 
+    //构造BOW
     fun computeBowImage() {
-        val img = ImageIO.read(File(""))
-        Mat2BufImg.BufImg2Mat(img, BufferedImage.TYPE_3BYTE_BGR, CvType.CV_8UC3)
+        val doc = DocumentBuilderFactory.newInstance()
+        val builder = doc.newDocumentBuilder()
+        val xml = builder.parse("$DATA_FOLDER/vocab.xml")
+        xml.getElementsByTagName("vocabulary")
+//        val va_fs = Mat2BufImg.BufImg2Mat(img, BufferedImage.TYPE_3BYTE_BGR, CvType.CV_8UC3)
+//        if (va_fs != null) {
+//            val tempVacab = Mat()
+//            tempVacab = va_fs.
+//        }
     }
 
+    //训练分类器
     fun trainSvm() {
         storSvms = SVM.create()
         //设置训练参数
@@ -109,11 +120,12 @@ class Features {
             }
 
             storSvms!!.train(temSamples, i, responses)
-            val svmFilename = "D:/project data/data/" + categoryName[i] + "SVM.xml"
+            val svmFilename = DATA_FOLDER + categoryName[i] + "SVM.xml"
             storSvms!!.save(svmFilename)
         }
     }
 
+    //将测试图片分类
     fun categoryBySvm() {
         println("物体分类开始..")
         val grayPic = Mat()
