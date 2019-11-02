@@ -20,7 +20,7 @@ class Features {
     var DATA_FOLDER = "D:/project data/data/"
     var TEMPLATE_FOLDER = "D:/project data/data/templates/"
 
-    var categories: Array<String> = arrayOf("Phoning", "PlayingGuitar")
+    var categories: Array<String> = arrayOf("airplanes", "butterfly","camera","scissors")
 
     val TRAIN_FOLDER = "D:/project data/data/train_images/"
     val TEST_FOLDER = "D:/project data/data/test_image"
@@ -68,13 +68,18 @@ class Features {
                 && files[i].name.contains(".jpg")
             ) {
                 val temp = imread(files[i].absolutePath)
-
+                val sub_category = removeExtention(files[i].absolutePath)
+                val image = imread(files[i].absolutePath)
+                resultObjects[sub_category] = image
             }
         }
+        println("初始化完毕...")
+        makeTrainSet()
     }
 
-    fun removeExtention(full_name: String) {
-
+    fun removeExtention(full_name: String): String {
+        var lastIndex = full_name.split(".");
+        return lastIndex[0]
     }
 
     //构造训练集合
