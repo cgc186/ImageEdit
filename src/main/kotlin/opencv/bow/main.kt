@@ -1,10 +1,10 @@
 package opencv.bow
 
-
-import org.opencv.core.Core
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.Scalar
+//
+//import org.opencv.core.Core
+//import org.opencv.core.CvType
+//import org.opencv.core.Mat
+//import org.opencv.core.Scalar
 
 
 //-Djava.library.path=E:\opencv\opencv3.4.1\build\java\x64;E:\opencv\opencv3.4.1\build\x64\vc15
@@ -24,7 +24,6 @@ import org.opencv.core.Scalar
 fun main() {
     val clusters = 1000
     val b = Features(clusters)
-
     //特征聚类
     b.bulidVacab()
     //构造BOW
