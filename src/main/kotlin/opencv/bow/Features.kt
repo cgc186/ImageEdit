@@ -1,18 +1,20 @@
 package opencv.bow
 
-import org.opencv.core.*
+
+import org.bytedeco.opencv.global.opencv_highgui.*
+import org.bytedeco.opencv.global.opencv_imgcodecs.imread
+import org.bytedeco.opencv.global.opencv_imgcodecs.imwrite
+import org.bytedeco.opencv.global.opencv_imgproc.cvtColor
+import org.bytedeco.opencv.opencv_core.*
+import org.bytedeco.opencv.opencv_features2d.*
+import org.bytedeco.opencv.opencv_ml.SVM
+import org.opencv.core.CvType
+import org.opencv.core.MatOfKeyPoint
 import org.opencv.imgcodecs.Imgcodecs
-import org.opencv.ml.SVM
+import org.opencv.imgproc.Imgproc
 import java.io.File
 import javax.imageio.ImageIO
-import org.opencv.core.Mat
-import org.opencv.features2d.*
-import org.opencv.imgproc.Imgproc
 import java.io.IOException
-import org.opencv.imgcodecs.Imgcodecs.imwrite
-import org.opencv.highgui.HighGui.*
-import org.opencv.imgcodecs.Imgcodecs.imread
-import java.awt.image.BufferedImage
 
 
 class Features {
@@ -20,7 +22,7 @@ class Features {
     var DATA_FOLDER = "D:/project data/data/"
     var TEMPLATE_FOLDER = "D:/project data/data/templates/"
 
-    var categories: Array<String> = arrayOf("airplanes", "butterfly","camera","scissors")
+    var categories: Array<String> = arrayOf("airplanes", "butterfly", "camera", "scissors")
 
     val TRAIN_FOLDER = "D:/project data/data/train_images/"
     val TEST_FOLDER = "D:/project data/data/test_image"
@@ -28,7 +30,7 @@ class Features {
 
     private var categoriesSize = 0
     //从类目名称到训练图集的映射，关键字可以重复出现
-    private var trainSet = mutableMapOf<String, MutableSet<Mat>>()
+    private var trainSet = mutableMapOf<String, MutableSet<GpuMat>>()
 
     private val bowtrainer = BOWKMeansTrainer(categoriesSize)
 
@@ -39,8 +41,10 @@ class Features {
     private var categoryName = mutableListOf<String>()
 
     //特征检测器detectors与描述子提取器extractors
-    private var featureDetector = FeatureDetector.create(categoriesSize)
-    private val descriptorExtractor = DescriptorExtractor.create(categoriesSize)
+    private var featureDetector: FastFeatureDetector? = null
+    private var descriptorExtractor: DescriptorMatcher? = null
+    private var descriptorMacher: FlannBasedMatcher? = null
+
     var bowDescriptorExtractor: BOWImgDescriptorExtractor? = null
     var storSvms: SVM? = null
 
@@ -57,9 +61,15 @@ class Features {
         var resultObjects = mutableMapOf<String, Mat>()
         // 训练得到的SVM
         storSvms = SVM.create()
-        //var descriptorMacher = FlannBasedMatcher()
-        bowDescriptorExtractor = BOWImgDescriptorExtractor.__fromPtr__(1L)
 
+        featureDetector = FastFeatureDetector.create()
+
+        descriptorExtractor = DescriptorMatcher.create("SUFT")
+        descriptorMacher = FlannBasedMatcher()
+        val feature2D = Feature2D()
+        bowDescriptorExtractor = BOWImgDescriptorExtractor(feature2D, descriptorMacher)
+
+        //获取该目录下的所有文件名
         val dir = File(TEMPLATE_FOLDER)
         val files = dir.listFiles()
         for (i in files.indices) {
@@ -70,6 +80,7 @@ class Features {
                 val temp = imread(files[i].absolutePath)
                 val sub_category = removeExtention(files[i].absolutePath)
                 val image = imread(files[i].absolutePath)
+                //存储原图模板
                 resultObjects[sub_category] = image
             }
         }
@@ -97,8 +108,9 @@ class Features {
                 if (!files[i].isDirectory
                     && files[i].name.contains(".jpg")
                 ) {
-                    val temp = imread(files[i].absolutePath)
-                    trainSet[cate]!!.add(temp)
+                    val temp: Mat? = imread(files[i].absolutePath)
+                    val gt = GpuMat(temp)
+                    trainSet[cate]!!.add(gt)
                 }
             }
         }
@@ -108,41 +120,38 @@ class Features {
 
     // 聚类得出词典
     fun bulidVacab() {
-        val image = Imgcodecs.imread("")
+        val vacab_fs = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
 
-        var vocabDescriptors: Mat = Mat()
-        val kp = MatOfKeyPoint()
+        if (vacab_fs.isOpened) {
+            println("图片已经聚类，词典已经存在..")
+        } else {
+            var vocabDescriptors = Mat()
+            val kp = KeyPointVector()
 
-        //var featureDetector = FeatureDetector.create(categoriesSize)
-        trainSet.forEach { matList ->
-            matList.value.forEach {
-                var descriptors: Mat = Mat()
-                featureDetector.detect(it, kp)
-                descriptorExtractor.compute(it, kp, descriptors)
-                vocabDescriptors.push_back(descriptors)
+            trainSet.forEach { matList ->
+                matList.value.forEach {
+                    var descriptors = GpuMat()
+                    featureDetector!!.detect(it, kp)
+                    bowDescriptorExtractor!!.compute(it, kp, descriptors)
+                    val t = Mat(descriptors)
+                    vocabDescriptors.push_back(t)
+                }
             }
+            bowtrainer.add(vocabDescriptors)
+            val vocab = bowtrainer.cluster()
+            val fileStorage = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.WRITE)
+            fileStorage.write("vocabulary", vocab)
         }
-        bowtrainer.add(vocabDescriptors)
-        val vocab = bowtrainer.cluster()
-        val img = Mat2BufImg.Mat2BufImg(vocab, ".jpg")
-        ImageIO.write(img, "jpg", File(DATA_FOLDER + "vocab.jpg"))
     }
 
     //构造BOW
     fun computeBowImage() {
-//        val doc = DocumentBuilderFactory.newInstance()
-//        val builder = doc.newDocumentBuilder()
-//        val xml = builder.parse("$DATA_FOLDER/vocab.xml")
-//
-//        val vocabulary = xml.getElementsByTagName("vocabulary")
-//        val mat = Mat(vocabulary)
+        val tempVocabulary = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
 
-        val img = ImageIO.read(File(DATA_FOLDER + "vocab.jpg"))
-
-        val tempVocabulary = Mat2BufImg.BufImg2Mat(img, BufferedImage.TYPE_3BYTE_BGR, CvType.CV_8UC3)
-        if (tempVocabulary != null) {
-            bowDescriptorExtractor!!.vocabulary = tempVocabulary
-
+        if (tempVocabulary.isOpened) {
+            var temp_vacab = Mat()
+            temp_vacab = tempVocabulary["vocabulary"].mat()
+            bowDescriptorExtractor!!.vocabulary = temp_vacab
         } else {
             bowDescriptorExtractor!!.vocabulary = vocab
         }
@@ -152,15 +161,16 @@ class Features {
         if (file.exists()) {
             println("BOW 已经准备好...")
         } else {
-            val kp = MatOfKeyPoint()
+            val kp = KeyPointVector()
             trainSet.forEach { matList ->
                 val cateName = matList.key
                 matList.value.forEach {
                     val tempImage = it
-                    var imageDescriptor = Mat()
-                    featureDetector.detect(tempImage, kp)
+                    var imageDescriptor = GpuMat()
+                    featureDetector!!.detect(tempImage, kp)
                     bowDescriptorExtractor!!.compute(tempImage, kp, imageDescriptor)
-                    allsamplesBow[cateName]!!.push_back(imageDescriptor)
+                    val im = Mat(imageDescriptor)
+                    allsamplesBow[cateName]!!.push_back(im)
                 }
             }
         }
@@ -209,8 +219,7 @@ class Features {
     //将测试图片分类
     fun categoryBySvm() {
         println("物体分类开始..")
-        val grayPic = Mat()
-        val thresholdImage = Mat()
+        val grayPic = GpuMat()
         var predictionCategory = ""
 
         var curConfidence = 0.0f
@@ -228,13 +237,13 @@ class Features {
                 var trainPicName = files[i].toString()
 
                 //读取图片
-                var inputPic = Imgcodecs.imread(files[i].toString())
+                var inputPic = imread(files[i].toString())
+                var ginputPic = GpuMat(inputPic)
+                cvtColor(ginputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
 
-                Imgproc.cvtColor(inputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
-
-                val kp = MatOfKeyPoint()
-                var test = Mat()
-                featureDetector.detect(grayPic, kp)
+                val kp = KeyPointVector()
+                var test = GpuMat()
+                featureDetector!!.detect(grayPic, kp)
                 bowDescriptorExtractor!!.compute(grayPic, kp, test)
 
                 var sign = 0
