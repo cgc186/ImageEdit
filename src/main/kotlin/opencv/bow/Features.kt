@@ -1,16 +1,22 @@
 package opencv.bow
 
 
-import org.bytedeco.opencv.global.opencv_highgui.*
-import org.bytedeco.opencv.global.opencv_imgcodecs.imread
-import org.bytedeco.opencv.global.opencv_imgcodecs.imwrite
-import org.bytedeco.opencv.global.opencv_imgproc.cvtColor
-import org.bytedeco.opencv.opencv_core.*
-import org.bytedeco.opencv.opencv_features2d.*
-import org.bytedeco.opencv.opencv_ml.SVM
-import org.opencv.core.CvType
-import org.opencv.imgproc.Imgproc
-import org.opencv.xfeatures2d.SURF
+//import org.bytedeco.opencv.global.opencv_core.noArray
+//import org.bytedeco.opencv.global.opencv_highgui.*
+//import org.bytedeco.opencv.global.opencv_imgcodecs.imread
+//import org.bytedeco.opencv.global.opencv_imgcodecs.imwrite
+//import org.bytedeco.opencv.global.opencv_imgproc.cvtColor
+//import org.bytedeco.opencv.opencv_core.*
+//import org.bytedeco.opencv.opencv_features2d.*
+//import org.bytedeco.opencv.opencv_ml.SVM
+import org.bytedeco.javacpp.opencv_core.*
+import org.bytedeco.javacpp.opencv_features2d.*
+import org.bytedeco.javacpp.opencv_highgui.*
+import org.bytedeco.javacpp.opencv_imgcodecs.*
+import org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY
+import org.bytedeco.javacpp.opencv_imgproc.cvtColor
+import org.bytedeco.javacpp.opencv_xfeatures2d
+import org.bytedeco.javacpp.opencv_ml.*
 import java.io.File
 import java.io.IOException
 
@@ -40,8 +46,8 @@ class Features {
 
     //特征检测器detectors与描述子提取器extractors
     private var featureDetector: FastFeatureDetector? = null
-    //private var descriptorExtractor: DescriptorMatcher? = null
-//    private var descriptorMacher: FlannBasedMatcher? = null
+    private var descriptorExtractor: FastFeatureDetector? = null
+    private var descriptorMacher: DescriptorMatcher? = null
 
     var bowDescriptorExtractor: BOWImgDescriptorExtractor? = null
     var storSvms: SVM? = null
@@ -66,9 +72,10 @@ class Features {
 
         bowtrainer = BOWKMeansTrainer(clusters)
 
-        var descriptorExtractor =FastFeatureDetector.create()
-        var descriptorMacher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE)
-        bowDescriptorExtractor = BOWImgDescriptorExtractor(descriptorExtractor,descriptorMacher)
+        descriptorExtractor = FastFeatureDetector.create()
+        //var descriptorMacher = FlannBasedMatcher()
+        descriptorMacher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE)
+        bowDescriptorExtractor =BOWImgDescriptorExtractor(descriptorExtractor, descriptorMacher)
 
         //获取该目录下的所有文件名
         val dir = File(TEMPLATE_FOLDER)
@@ -120,7 +127,7 @@ class Features {
 
     // 聚类得出词典
     fun bulidVacab() {
-        val vacabFs = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
+        val vacabFs = FileStorage(DATA_FOLDER + "vocab.xml",FileStorage.READ)
 
         if (vacabFs.isOpened) {
             println("图片已经聚类，词典已经存在..")
@@ -206,12 +213,12 @@ class Features {
                     allsamplesBow[categoryName[i]]!!.cols(),
                     allsamplesBow[categoryName[i]]!!.type()
                 )
-                var responses = Mat(0, 1, CvType.CV_32SC1)
+                var responses = Mat(0, 1, CV_32SC1)
                 temSamples.push_back(allsamplesBow[categoryName[i]])
                 var posResponses = Mat(
                     allsamplesBow[categoryName[i]]!!.rows(),
                     1,
-                    CvType.CV_32SC1,
+                    CV_32SC1,
                     Scalar.all(1.0)
                 )
                 responses.push_back(posResponses)
@@ -221,7 +228,7 @@ class Features {
                         return@forEach
                     }
                     temSamples.push_back(it.value)
-                    val response = Mat(it.value.rows(), 1, CvType.CV_32SC1, Scalar.all(-1.0))
+                    val response = Mat(it.value.rows(), 1, CV_32SC1, Scalar.all(-1.0))
                     responses.push_back(response)
                 }
 
@@ -254,13 +261,14 @@ class Features {
 
                 //读取图片
                 var inputPic = imread(files[i].toString())
-                cvtColor(inputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
+                cvtColor(inputPic, grayPic, COLOR_BGR2GRAY)
 
                 // 提取BOW描述子
                 val kp = KeyPointVector()
                 var test = Mat()
                 featureDetector!!.detect(grayPic, kp)
                 bowDescriptorExtractor!!.compute(grayPic, kp, test)
+//                featureDetector!!.detectAndCompute(grayPic,noArray(),kp,test)
 
                 var sign = 0
                 var bestScore = -2.0f
