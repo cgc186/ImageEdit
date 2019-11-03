@@ -9,30 +9,28 @@ import org.bytedeco.opencv.opencv_core.*
 import org.bytedeco.opencv.opencv_features2d.*
 import org.bytedeco.opencv.opencv_ml.SVM
 import org.opencv.core.CvType
-import org.opencv.core.MatOfKeyPoint
-import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
+import org.opencv.xfeatures2d.SURF
 import java.io.File
-import javax.imageio.ImageIO
 import java.io.IOException
-
 
 class Features {
 
     var DATA_FOLDER = "D:/project data/data/"
     var TEMPLATE_FOLDER = "D:/project data/data/templates/"
 
-    var categories: Array<String> = arrayOf("airplanes", "butterfly", "camera", "scissors")
+    var categories: Array<String> = arrayOf("airplanes", "butterfly", "camera", "scissors", "sunflower")
 
     val TRAIN_FOLDER = "D:/project data/data/train_images/"
     val TEST_FOLDER = "D:/project data/data/test_image"
     val RESULT_FOLDER = "D:/project data/data/result_image/"
 
+    //类目数目
     private var categoriesSize = 0
     //从类目名称到训练图集的映射，关键字可以重复出现
-    private var trainSet = mutableMapOf<String, MutableSet<GpuMat>>()
+    private var trainSet = mutableMapOf<String, MutableSet<Mat>>()
 
-    private val bowtrainer = BOWKMeansTrainer(categoriesSize)
+    private var bowtrainer: BOWKMeansTrainer? = null
 
     //存放所有训练图片的BOW
     private val allsamplesBow = mutableMapOf<String, Mat>()
@@ -42,8 +40,8 @@ class Features {
 
     //特征检测器detectors与描述子提取器extractors
     private var featureDetector: FastFeatureDetector? = null
-    private var descriptorExtractor: DescriptorMatcher? = null
-    private var descriptorMacher: FlannBasedMatcher? = null
+    //private var descriptorExtractor: DescriptorMatcher? = null
+//    private var descriptorMacher: FlannBasedMatcher? = null
 
     var bowDescriptorExtractor: BOWImgDescriptorExtractor? = null
     var storSvms: SVM? = null
@@ -51,12 +49,14 @@ class Features {
     private var resultObjects: MutableMap<String, Mat>? = null
 
     //存放训练图片词典
-    val vocab = Mat()
+    private val vocab = Mat()
+
+    var clusters: Int = 0
 
     // 构造函数
-    constructor(categoriesSize: Int) {
+    constructor(clusters: Int) {
         println("开始初始化...")
-        this.categoriesSize = categoriesSize
+        this.clusters = clusters
         //从类目名称到数据的map映射
         var resultObjects = mutableMapOf<String, Mat>()
         // 训练得到的SVM
@@ -64,10 +64,11 @@ class Features {
 
         featureDetector = FastFeatureDetector.create()
 
-        descriptorExtractor = DescriptorMatcher.create("SUFT")
-        descriptorMacher = FlannBasedMatcher()
-        val feature2D = Feature2D()
-        bowDescriptorExtractor = BOWImgDescriptorExtractor(feature2D, descriptorMacher)
+        bowtrainer = BOWKMeansTrainer(clusters)
+
+        var descriptorExtractor =FastFeatureDetector.create()
+        var descriptorMacher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE)
+        bowDescriptorExtractor = BOWImgDescriptorExtractor(descriptorExtractor,descriptorMacher)
 
         //获取该目录下的所有文件名
         val dir = File(TEMPLATE_FOLDER)
@@ -77,30 +78,29 @@ class Features {
             if (!files[i].isDirectory
                 && files[i].name.contains(".jpg")
             ) {
-                val temp = imread(files[i].absolutePath)
-                val sub_category = removeExtention(files[i].absolutePath)
+                val subCategory = removeExtention(files[i].absolutePath)
                 val image = imread(files[i].absolutePath)
                 //存储原图模板
-                resultObjects[sub_category] = image
+                resultObjects[subCategory] = image
             }
         }
         println("初始化完毕...")
         makeTrainSet()
     }
 
-    fun removeExtention(full_name: String): String {
+    private fun removeExtention(full_name: String): String {
         var lastIndex = full_name.split(".");
         return lastIndex[0]
     }
 
     //构造训练集合
-    fun makeTrainSet() {
+    private fun makeTrainSet() {
         println("读取训练集...")
-        val categor = ""
-        val samples = ""
         //类别
-        categories?.forEach { cate ->
+        categories.forEach { cate ->
             categoryName.add(cate)
+            var train = mutableSetOf<Mat>()
+            trainSet[cate] = train
             val dir = File(TRAIN_FOLDER + File.separator + cate)
             val files = dir.listFiles() ?: throw  IOException("cannot find category $cate")
             for (i in files.indices) {
@@ -108,9 +108,9 @@ class Features {
                 if (!files[i].isDirectory
                     && files[i].name.contains(".jpg")
                 ) {
-                    val temp: Mat? = imread(files[i].absolutePath)
-                    val gt = GpuMat(temp)
-                    trainSet[cate]!!.add(gt)
+                    //println(files[i].absolutePath)
+                    val temp = imread(files[i].absolutePath)
+                    trainSet[cate]!!.add(temp)
                 }
             }
         }
@@ -120,9 +120,9 @@ class Features {
 
     // 聚类得出词典
     fun bulidVacab() {
-        val vacab_fs = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
+        val vacabFs = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
 
-        if (vacab_fs.isOpened) {
+        if (vacabFs.isOpened) {
             println("图片已经聚类，词典已经存在..")
         } else {
             var vocabDescriptors = Mat()
@@ -130,15 +130,15 @@ class Features {
 
             trainSet.forEach { matList ->
                 matList.value.forEach {
-                    var descriptors = GpuMat()
+                    var descriptors = Mat()
                     featureDetector!!.detect(it, kp)
                     bowDescriptorExtractor!!.compute(it, kp, descriptors)
                     val t = Mat(descriptors)
                     vocabDescriptors.push_back(t)
                 }
             }
-            bowtrainer.add(vocabDescriptors)
-            val vocab = bowtrainer.cluster()
+            bowtrainer!!.add(vocabDescriptors)
+            val vocab = bowtrainer!!.cluster()
             val fileStorage = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.WRITE)
             fileStorage.write("vocabulary", vocab)
         }
@@ -149,9 +149,9 @@ class Features {
         val tempVocabulary = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
 
         if (tempVocabulary.isOpened) {
-            var temp_vacab = Mat()
-            temp_vacab = tempVocabulary["vocabulary"].mat()
-            bowDescriptorExtractor!!.vocabulary = temp_vacab
+            var tempVacab = Mat()
+            tempVacab = tempVocabulary["vocabulary"].mat()
+            bowDescriptorExtractor!!.vocabulary = tempVacab
         } else {
             bowDescriptorExtractor!!.vocabulary = vocab
         }
@@ -164,9 +164,10 @@ class Features {
             val kp = KeyPointVector()
             trainSet.forEach { matList ->
                 val cateName = matList.key
+                allsamplesBow[cateName] = Mat()
                 matList.value.forEach {
                     val tempImage = it
-                    var imageDescriptor = GpuMat()
+                    var imageDescriptor = Mat()
                     featureDetector!!.detect(tempImage, kp)
                     bowDescriptorExtractor!!.compute(tempImage, kp, imageDescriptor)
                     val im = Mat(imageDescriptor)
@@ -180,46 +181,61 @@ class Features {
 
     //训练分类器
     fun trainSvm() {
-        storSvms = SVM.create()
-        //设置训练参数
-        storSvms!!.type = SVM.C_SVC
-        storSvms!!.setKernel(SVM.LINEAR)
-        storSvms!!.termCriteria = TermCriteria(1, 100, 1e-6)
-        for (i in 0 until categoriesSize) {
-            var temSamples = Mat(
-                0,
-                allsamplesBow[categoryName[i]]!!.cols(),
-                allsamplesBow[categoryName[i]]!!.type()
-            )
-            var responses = Mat(0, 1, CvType.CV_32SC1)
-            temSamples.push_back(allsamplesBow[categoryName[i]])
-            var posResponses = Mat(
-                allsamplesBow[categoryName[i]]!!.rows(),
-                1,
-                CvType.CV_32SC1,
-                Scalar.all(1.0)
-            )
-            responses.push_back(posResponses)
-
-            allsamplesBow.forEach {
-                if (it.key == categoryName[i]) {
-                    return@forEach
-                }
-                temSamples.push_back(it.value)
-                val response = Mat(it.value.rows(), 1, CvType.CV_32SC1, Scalar.all(-1.0))
-                responses.push_back(response)
+        var flag = 0
+        for (k in 0 until categoriesSize) {
+            val svmFil = FileStorage(DATA_FOLDER + categoryName[k] + "SVM.xml", FileStorage.READ)
+            if (svmFil.isOpened) {
+                continue
+            } else {
+                flag = -1
+                break
             }
+        }
 
-            storSvms!!.train(temSamples, i, responses)
-            val svmFilename = DATA_FOLDER + categoryName[i] + "SVM.xml"
-            storSvms!!.save(svmFilename)
+        if (flag != -1) {
+            println("分类器已经训练完毕...")
+        } else {
+            storSvms = SVM.create()
+            //设置训练参数
+            storSvms!!.type = SVM.C_SVC
+            storSvms!!.setKernel(SVM.LINEAR)
+            storSvms!!.termCriteria = TermCriteria(1, 100, 1e-6)
+            for (i in 0 until categoriesSize) {
+                var temSamples = Mat(
+                    0,
+                    allsamplesBow[categoryName[i]]!!.cols(),
+                    allsamplesBow[categoryName[i]]!!.type()
+                )
+                var responses = Mat(0, 1, CvType.CV_32SC1)
+                temSamples.push_back(allsamplesBow[categoryName[i]])
+                var posResponses = Mat(
+                    allsamplesBow[categoryName[i]]!!.rows(),
+                    1,
+                    CvType.CV_32SC1,
+                    Scalar.all(1.0)
+                )
+                responses.push_back(posResponses)
+
+                allsamplesBow.forEach {
+                    if (it.key == categoryName[i]) {
+                        return@forEach
+                    }
+                    temSamples.push_back(it.value)
+                    val response = Mat(it.value.rows(), 1, CvType.CV_32SC1, Scalar.all(-1.0))
+                    responses.push_back(response)
+                }
+
+                storSvms!!.train(temSamples, i, responses)
+                val svmFilename = DATA_FOLDER + categoryName[i] + "SVM.xml"
+                storSvms!!.save(svmFilename)
+            }
         }
     }
 
     //将测试图片分类
     fun categoryBySvm() {
         println("物体分类开始..")
-        val grayPic = GpuMat()
+        val grayPic = Mat()
         var predictionCategory = ""
 
         var curConfidence = 0.0f
@@ -238,11 +254,11 @@ class Features {
 
                 //读取图片
                 var inputPic = imread(files[i].toString())
-                var ginputPic = GpuMat(inputPic)
-                cvtColor(ginputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
+                cvtColor(inputPic, grayPic, Imgproc.COLOR_BGR2GRAY)
 
+                // 提取BOW描述子
                 val kp = KeyPointVector()
-                var test = GpuMat()
+                var test = Mat()
                 featureDetector!!.detect(grayPic, kp)
                 bowDescriptorExtractor!!.compute(grayPic, kp, test)
 
@@ -251,11 +267,10 @@ class Features {
 
                 for (i in 0 until categoriesSize) {
                     val cateName = categoryName[i]
-                    val f_path = "D:/project data/data/" + cateName + "SVM.xml"
-                    //FileStorage svm_fs(f_path,FileStorage::READ);
-                    val svmFile = ImageIO.read(File(f_path))
-                    if (svmFile != null) {
-                        var stSvm = SVM.load(f_path)
+                    val fPath = DATA_FOLDER + cateName + "SVM.xml"
+                    val svmFile = FileStorage(fPath, FileStorage.READ)
+                    if (svmFile.isOpened) {
+                        var stSvm = SVM.load(fPath)
                         if (sign == 0) {
                             //val scoreValue = stSvm.predict(test, true)
                             //var classValue = stSvm.predict(test, false)
