@@ -15,7 +15,6 @@ import org.bytedeco.javacpp.opencv_highgui.*
 import org.bytedeco.javacpp.opencv_imgcodecs.*
 import org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2GRAY
 import org.bytedeco.javacpp.opencv_imgproc.cvtColor
-import org.bytedeco.javacpp.opencv_xfeatures2d
 import org.bytedeco.javacpp.opencv_ml.*
 import java.io.File
 import java.io.IOException
@@ -250,6 +249,7 @@ class Features {
         val dir = File(TEST_FOLDER)
 
         val files = dir.listFiles() ?: throw  IOException("cannot find category ")
+
         for (i in files.indices) {
             //获取该目录下的图片名
             if (!files[i].isDirectory
