@@ -82,7 +82,7 @@ class InstanceGenerator {
             }
 
         }
-        allFeatures["bow"] = bow
+        allFeatures[""] = bow
 
         return allFeatures
     }
@@ -144,7 +144,7 @@ class InstanceGenerator {
         //根据样本文件列表生成特征点向量的列表
         var allFeatures = getFeatures(samples)
 
-        var bow = allFeatures["bow"]
+        var bow = allFeatures[""]
 
         var dict = calcDict(bow!!)
 
