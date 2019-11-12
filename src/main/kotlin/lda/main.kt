@@ -1,5 +1,0 @@
-package lda
-
-fun main() {
-
-}
