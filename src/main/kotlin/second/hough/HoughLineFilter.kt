@@ -80,8 +80,8 @@ class HoughLineFilter {
         }
         println("MAX HOUGH VALUE = $maxHough")
 
-        var line =
-            mutableMapOf<Double, MutableMap<Int, MutableSet<Int>>>()
+//        var line =
+//            mutableMapOf<Double, MutableMap<Int, MutableSet<Int>>>()
 
         val result = mutableSetOf<Line>()
 
@@ -193,8 +193,8 @@ class HoughLineFilter {
             temp.forEach {
                 var hough = hough2d!![it.theta][it.r]
                 if (maxHough < hough) {
-                    var row = it.theta
-                    var col = it.r
+                    row = it.theta
+                    col = it.r
                 }
             }
             temp.clear()

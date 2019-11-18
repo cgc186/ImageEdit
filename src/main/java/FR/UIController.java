@@ -110,7 +110,7 @@ public class UIController {
         final FileChooser filechooser = new FileChooser();
         //String picDir = "C:\\Users\\tzz\\Desktop\\图像处理课程设计2018秋\\人脸测试库";
         //String picDir = "C:\\Users\\tzz\\Desktop\\图像处理课程设计2018秋\\新建文件夹 (2)";
-        String picDir ="E:/备份/OneDrive - Dezhkeda/壁纸";
+        String picDir ="E:\\lib";
         System.out.println(picDir);
         filechooser.setInitialDirectory(new File(picDir));
         Stage stage = new Stage();
@@ -244,7 +244,7 @@ public class UIController {
     public void savePic338(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Image");
-        String picDir = "E:\\备份\\OneDrive - Dezhkeda\\壁纸";
+        String picDir = "E:\\lib";
         fileChooser.setInitialDirectory(new File(picDir));
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("JPG", "*.jpg"),
@@ -274,7 +274,7 @@ public class UIController {
         picNum = FaceRecognition.readPicNumFromFile();
         System.out.println("picNum:" + picNum);
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        String path = "E:\\备份\\OneDrive - Dezhkeda\\壁纸";
+        String path = "E:\\lib";
         directoryChooser.setInitialDirectory(new File(path));
         Stage stage = new Stage();
         File dir = directoryChooser.showDialog(stage);

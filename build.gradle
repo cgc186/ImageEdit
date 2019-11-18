@@ -23,8 +23,8 @@ dependencies {
     //compile group: 'log4j', name: 'log4j', version: '1.2.17'
     //compile 'com.alibaba:simpleimage:1.2.3'
     //compile ("mysql:mysql-connector-java:8.0.11")
-    compile group: 'org.bytedeco', name: 'javacv-platform', version: '1.4.1'
-    //compile 'org.openpnp:opencv:3.4.2-1'
+    compile group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.1'
+   //compile 'org.openpnp:opencv:3.4.1'
 }
 
 compileKotlin {

@@ -1,8 +1,6 @@
 package second.hough
 
 import java.awt.image.BufferedImage
-import com.sun.scenario.effect.ImageData
-import java.awt.Color
 import java.awt.Image
 import kotlin.math.cos
 import kotlin.math.sin

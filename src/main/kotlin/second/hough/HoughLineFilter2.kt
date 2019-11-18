@@ -118,8 +118,8 @@ class HoughLineFilter2 {
             temp.forEach {
                 var hough = hough2d!![it.theta][it.r]
                 if (maxHough < hough) {
-                    var row = it.theta
-                    var col = it.r
+                    row = it.theta
+                    col = it.r
                 }
             }
             temp.clear()

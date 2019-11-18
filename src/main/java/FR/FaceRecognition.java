@@ -31,16 +31,16 @@ public class FaceRecognition {
     private ArrayList<String> list = null;
     private Mat trainFaceMat = null;//样本训练矩阵
     private Mat meanFaceMat = null;//平均值矩阵
-    private String MFMFileName = "meanFaceMat";
+    private String MFMFileName = "data/meanFaceMat";
     private Mat normTrainFaceMat = null;//规格化训练样本矩阵
     private int matRows;//矩阵行 height y
     private int matCols = 48 * 48;//矩阵列 width x
     private Mat eigenVectors = null;//降维后特征向量
-    private String vectorsFile = "eigenVectors";//特征向量保存文件地址
-    private String eigenFile = "eigenFace";
+    private String vectorsFile = "data/eigenVectors";//特征向量保存文件地址
+    private String eigenFile = "data/eigenFace";
     private Mat eigenFace = null;//样本的特征脸空间
     private Mat eigenTrainSample = null;//投影样本矩阵
-    private String eigenTrainSampleFile = "eigenTrainSample";
+    private String eigenTrainSampleFile = "data/eigenTrainSample";
     private Mat classMat = null;
     private Mat ldaTrainSample = null;
 
@@ -199,7 +199,7 @@ public class FaceRecognition {
                     classMat.put((i - 1) * picNum + j - 1, 0, i);
                 }
             }
-            saveMatToFile(classMat, "classMat");
+            saveMatToFile(classMat, "data/classMat");
         }
         return fileArrayList;
     }
@@ -405,7 +405,7 @@ public class FaceRecognition {
         gemm(normTrainFaceMat, eigenFace, 1, new Mat(), 0, eigenTrainSample);//M*N * N*m -> M*m
         System.out.println("eigenTrainSample:" + eigenTrainSample.height() + "*" + eigenTrainSample.width());
         //outputMat(eigenTrainSample);
-        saveMatToTXTFile(eigenTrainSample, "eigenTrainSampleTXT.txt");
+        saveMatToTXTFile(eigenTrainSample, "data/eigenTrainSampleTXT.txt");
         saveMatToFile(eigenTrainSample, eigenTrainSampleFile);
     }
 
@@ -432,7 +432,7 @@ public class FaceRecognition {
         //outputMat(eigenTestSample);
         //测试人脸在LDA投影空间上进行投影
         Mat ldaTestSample = new Mat();
-        Mat ldaeigenVectors = readMatFromFile("ldaeigenVectors");
+        Mat ldaeigenVectors = readMatFromFile("data/ldaeigenVectors");
         System.out.println("ldaeigenVectors:" + ldaeigenVectors.height() + "*" + ldaeigenVectors.width());
         //outputMat(ldaeigenVectors);
         gemm(eigenTestSample, ldaeigenVectors, 1, new Mat(), 0, ldaTestSample);
@@ -591,13 +591,13 @@ public class FaceRecognition {
             }
             System.out.println("t:" + t);
 
-            saveMatToFile(ldaeigenVectors, "ldaeigenVectors");
+            saveMatToFile(ldaeigenVectors, "data/ldaeigenVectors");
             //outputMat(ldaeigenVectors);
             ldaTrainSample = new Mat();
             //readEigenTrainSample();
             gemm(eigenTrainSample, ldaeigenVectors, 1, new Mat(), 0, ldaTrainSample);
             //outputMat(ldaTrainSample);
-            saveMatToFile(ldaTrainSample, "ldaTrainSample");
+            saveMatToFile(ldaTrainSample, "data/ldaTrainSample");
 
         } while (t < 20);
     }
@@ -660,7 +660,7 @@ public class FaceRecognition {
 
     private void saveImgListToFile() {
         try {
-            FileWriter fileWriter = new FileWriter("imgList");
+            FileWriter fileWriter = new FileWriter("data/imgList");
             BufferedWriter bw = new BufferedWriter(fileWriter);
             for (File file : imgList) {
                 bw.write(file.getPath() + "\n");
@@ -692,7 +692,7 @@ public class FaceRecognition {
 
     private void readImgList() {
         try {
-            InputStream is = new FileInputStream(new File("imgList"));
+            InputStream is = new FileInputStream(new File("data/imgList"));
             String line;
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             line = br.readLine();
@@ -710,7 +710,7 @@ public class FaceRecognition {
 
     private void readClassMat() {
         try {
-            DataInputStream inputStream = new DataInputStream(new FileInputStream("classMat"));
+            DataInputStream inputStream = new DataInputStream(new FileInputStream("data/classMat"));
             int row = inputStream.readInt();
             int col = inputStream.readInt();
             classMat = new Mat(row, col, CV_32FC1);
@@ -726,7 +726,7 @@ public class FaceRecognition {
 
     private void readLDATrainSample() {
         try {
-            DataInputStream inputStream = new DataInputStream(new FileInputStream("ldaTrainSample"));
+            DataInputStream inputStream = new DataInputStream(new FileInputStream("data/ldaTrainSample"));
             int row = inputStream.readInt();
             int col = inputStream.readInt();
             ldaTrainSample = new Mat(row, col, CV_32FC1);
