@@ -2,7 +2,7 @@ package bowjni;
 
 public class Java2cpp {
     static{
-        System.loadLibrary("javaToCpp");
+        System.loadLibrary("data/javaToCpp");
     }
 
     public native void train(int _clusters, String dF, String tF, String tempF, String testF, String rF);
@@ -16,11 +16,11 @@ public class Java2cpp {
     public static void main(String[] args) {
         int clusters = 1000;
 
-        String dataFolder = "D:/project data/data/";
-        String trainFolder = "D:/project data/data/train_images/";
-        String templateFolder = "D:/project data/data/templates/";
-        String testFolder = "D:/project data/data/test_image";
-        String resultFolder = "D:/project data/data/result_image/";
+        String dataFolder = "data/bowData/";
+        String trainFolder = "data/bowData/train_images/";
+        String templateFolder = "data/bowData/templates/";
+        String testFolder = "data/bowData/test_image";
+        String resultFolder = "data/bowData/result_image/";
 
         Java2cpp tt = new Java2cpp();
 

@@ -9,13 +9,13 @@ import cnn.data.DataSet;
 
 
 public class Main {
-    private static final String MODEL_NAME = "mnist/model/model.cnn";
+    private static final String MODEL_NAME = "data/mnist/model/model.cnn";
 
-    private static final String TRAIN_DATA = "mnist/train.format";
+    private static final String TRAIN_DATA = "data/mnist/train.format";
 
-    private static final String TEST_DATA = "mnist/test.format";
+    private static final String TEST_DATA = "data/mnist/test.format";
 
-    private static final String TEST_PREDICT = "mnist/test.predict";
+    private static final String TEST_PREDICT = "data/mnist/test.predict";
 
     public static void main(String[] args) {
         System.err.println("训练阶段：");

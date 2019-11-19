@@ -48,14 +48,14 @@ object Lda {
             }
         }
         try {
-            val fileWriter1 = FileWriter("data/imgTrainList.txt")
+            val fileWriter1 = FileWriter("data/ldaData/imgTrainList.txt")
             val bw1 = BufferedWriter(fileWriter1)
             for (file in imgList) {
                 bw1.write(file + "\n")
             }
             bw1.close()
             fileWriter1.close()
-            val fileWriter2 = FileWriter("data/templates.txt")
+            val fileWriter2 = FileWriter("data/ldaData/templates.txt")
             val bw2 = BufferedWriter(fileWriter2)
             for (file in templates) {
                 bw2.write(file + "\n")
@@ -63,7 +63,7 @@ object Lda {
             bw2.close()
             fileWriter2.close()
             if (index != 0){
-                val fileWriter3 = FileWriter("data/test.txt")
+                val fileWriter3 = FileWriter("data/ldaData/test.txt")
                 val bw3 = BufferedWriter(fileWriter3)
                 for (file in test) {
                     bw3.write(file + "\n")
@@ -140,8 +140,3 @@ object Lda {
     }
 }
 
-
-fun main() {
-    Lda.train()
-    Lda.test()
-}
