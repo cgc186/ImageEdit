@@ -10,26 +10,26 @@ extern "C" {
 /*
  * Class:     ldajni_LdaFace
  * Method:    train
- * Signature: (Ljava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_ldajni_LdaFace_train
-  (JNIEnv *, jobject, jstring);
-
-/*
- * Class:     ldajni_LdaFace
- * Method:    test
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_ldajni_LdaFace_test
+JNIEXPORT void JNICALL Java_ldajni_LdaFace_train
   (JNIEnv *, jobject, jstring, jstring);
 
 /*
  * Class:     ldajni_LdaFace
+ * Method:    test
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_ldajni_LdaFace_test
+  (JNIEnv *, jobject, jstring, jstring, jstring);
+
+/*
+ * Class:     ldajni_LdaFace
  * Method:    predict
- * Signature: (Ljava/lang/String;)I
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_ldajni_LdaFace_predict
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jobject, jstring, jstring);
 
 #ifdef __cplusplus
 }

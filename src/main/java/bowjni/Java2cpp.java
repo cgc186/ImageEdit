@@ -27,6 +27,6 @@ public class Java2cpp {
         tt.train(clusters, dataFolder, trainFolder, templateFolder, testFolder, resultFolder);
 
         //将测试图片分类
-        //tt.categoryBySvm(dataFolder, testFolder);
+        tt.categoryBySvm(dataFolder, testFolder);
     }
 }
