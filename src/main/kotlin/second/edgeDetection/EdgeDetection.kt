@@ -93,7 +93,7 @@ class EdgeDetection {
         return image
     }
 
-    fun sobel3(img: BufferedImage): BufferedImage? {
+    fun sobel3(img: BufferedImage): BufferedImage {
 
         val grayImg = toGray(img)
         var w = grayImg.width
@@ -122,7 +122,7 @@ class EdgeDetection {
         return toImage(w, h, d)
     }
 
-    fun sobel1(img: BufferedImage): BufferedImage? {
+    fun sobel1(img: BufferedImage): BufferedImage {
 
 //        val grayImg = ImageUtil.toGray(img)
 //        var w = grayImg.width

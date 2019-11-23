@@ -11,7 +11,7 @@ fun main() {
     val edgeDetection= EdgeDetection()
     val jf = JFrame()
     val fd = FileDialog(jf,"选择图片")
-    fd.show()
+    fd.isVisible = true
     val img = ImageIO.read(File(fd.directory,fd.file))
     val resulting = edgeDetection.sobel2(img)
 //    val resulting = ImageUtil.toGray(img)
@@ -19,7 +19,7 @@ fun main() {
     output.createGraphics().drawImage(resulting, 0, 0, null)
     val fd2 = FileDialog(jf,"储存图片")
     fd2.mode = FileDialog.SAVE
-    fd2.show()
+    fd2.isVisible = true
     ImageIO.write(resulting,"jpg",File(fd2.directory,fd2.file))
     exitProcess(0)
 }

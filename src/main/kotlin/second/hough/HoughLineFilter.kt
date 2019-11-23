@@ -13,13 +13,19 @@ class HoughLineFilter {
     private var width: Int = 0
     private var height: Int = 0
 
-    val threshold: Float = 0.7f  //0.5f
+    var threshold: Float = 0.7f  //0.5f
 
     var size = 6  //30
 
+    fun setAttribute(houghSpace:Int,threshold: Float, size: Int) {
+        this.houghSpace = houghSpace
+        this.threshold = threshold
+        this.size = size
+    }
+
     class Line(var theta: Int, var r: Int)
 
-    fun filter(src: BufferedImage): BufferedImage? {
+    fun filter(src: BufferedImage): BufferedImage {
         var dest = BufferedImage(src.width, src.height, Image.SCALE_DEFAULT)
         width = src.width
         height = src.height
@@ -213,7 +219,7 @@ class HoughLineFilter {
 
             println("theta = ${it.theta} r = ${it.r} sin = $dy cos = $dx")
 
-            println("y = ${-(dx/dy)} x + ${(it.r/dy)}")
+            println("y = ${-(dx / dy)} x + ${(it.r / dy)}")
 
             if (it.theta <= houghSpace / 4 || it.theta >= 3 * houghSpace / 4) {
                 for (subRow in 0 until height) {

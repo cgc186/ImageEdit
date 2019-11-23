@@ -18,7 +18,7 @@ class HoughLineFilter2 {
 
     class Line(var theta: Int, var r: Int)
 
-    fun filter(src: BufferedImage): BufferedImage? {
+    fun filter(src: BufferedImage): BufferedImage {
         var dest = BufferedImage(src.width, src.height, Image.SCALE_DEFAULT)
         width = src.width
         height = src.height

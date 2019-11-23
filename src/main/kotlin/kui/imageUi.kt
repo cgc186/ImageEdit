@@ -1,0 +1,4 @@
+package kui
+
+class imageUi {
+}
