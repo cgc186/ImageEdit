@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class Main {
 
-    private JFrame jf = new JFrame("图像处理");
+    public JFrame jf = new JFrame("图像处理");
 
     JMenuBar menuBar;
 
@@ -492,11 +492,11 @@ public class Main {
         jSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);//设置分割线方向
 
 
-        myPanel1.setSize(400, 400);
+        myPanel1.setSize(jf.getWidth()/2, jf.getHeight());
         imageJLabel = new JLabel();
         myPanel1.add(imageJLabel);
 
-        myPanel2.setSize(400, 400);
+        myPanel2.setSize(jf.getWidth()/2, jf.getHeight());
 
         editImageJLabel = new JLabel();
         myPanel2.add(editImageJLabel);
@@ -505,7 +505,7 @@ public class Main {
         jSplitPane.setRightComponent(myPanel2);//添加面板2
         jSplitPane.setDividerSize(1);//设置分割线的宽度
         //jSplitPane.setDividerLocation(100);//设置分割线位于中央
-        jSplitPane.setDividerLocation(400);//设定分割线的距离左边的位置
+        jSplitPane.setDividerLocation(jf.getWidth()/2);//设定分割线的距离左边的位置
 
         return jSplitPane;
     }
@@ -598,9 +598,7 @@ public class Main {
          */
         t.jf.setJMenuBar(t.getJMenuBar());
 
-
         t.jf.setContentPane(t.getJSplitPane());
-
 
         t.jf.setVisible(true);
     }
