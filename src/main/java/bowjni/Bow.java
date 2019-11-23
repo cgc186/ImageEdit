@@ -31,17 +31,17 @@ public class Bow {
         Bow b = new Bow();
         int clusters = 1000;
 
-//        String dataFolder = "data/bowData/";
-//        String trainFolder = "data/bowData/train_images/";
-//        String templateFolder = "data/bowData/templates/";
-//        String testFolder = "data/bowData/test_image";
-//        String resultFolder = "data/bowData/result_image/";
+        String dataFolder = "data/bowData/";
+        String trainFolder = "data/bowData/train_images/";
+        String templateFolder = "data/bowData/templates/";
+        String testFolder = "data/bowData/test_image";
+        String resultFolder = "data/bowData/result_image/";
 
-        String dataFolder = "D:/project data/data/";
-        String trainFolder = "D:/project data/data/train_images/";
-        String templateFolder = "D:/project data/data/templates/";
-        String testFolder = "D:/project data/data/test_image";
-        String resultFolder = "D:/project data/data/result_image/";
+//        String dataFolder = "D:/project data/data/";
+//        String trainFolder = "D:/project data/data/train_images/";
+//        String templateFolder = "D:/project data/data/templates/";
+//        String testFolder = "D:/project data/data/test_image";
+//        String resultFolder = "D:/project data/data/result_image/";
 
         b.train(clusters, dataFolder, trainFolder, templateFolder, testFolder, resultFolder);
         String img = "D:/project data/data/test_image/0.jpg";

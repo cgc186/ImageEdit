@@ -48,17 +48,30 @@ public class Main {
          */
         JMenu fileMenu = new JMenu("文件");
         JMenu editMenu = new JMenu("编辑");
+        JMenu bowMenu = new JMenu("物体识别");
+        JMenu ldaMenu = new JMenu("人脸图像识别");
+        JMenu numberMenu = new JMenu("手写数字识别");
         JMenu viewMenu = new JMenu("图像");
         JMenu aboutMenu = new JMenu("关于");
         // 一级菜单添加到菜单栏
         menuBar.add(fileMenu);
+        initFileMenu(fileMenu);
+
         menuBar.add(editMenu);
+        initEditMenu(editMenu);
+
+        menuBar.add(bowMenu);
+        initBowMenu(bowMenu);
+
+        menuBar.add(ldaMenu);
+        initLdaMenu(ldaMenu);
+
+        menuBar.add(numberMenu);
+        initNumberMenu(numberMenu);
+
         menuBar.add(viewMenu);
         menuBar.add(aboutMenu);
 
-        initFileMenu(fileMenu);
-
-        initEditMenu(editMenu);
 
         /*
          * 创建 "视图" 一级菜单的子菜单
@@ -110,25 +123,32 @@ public class Main {
          * 创建 "文件" 一级菜单的子菜单
          */
         //JMenuItem newMenuItem = new JMenuItem("新建");
-        JMenuItem openMenuItem = new JMenuItem("打开");
+        JMenu openMenu = new JMenu("打开");
         JMenuItem exitMenuItem = new JMenuItem("关闭");
         JMenuItem saveMenuItem = new JMenuItem("另存为");
         // 子菜单添加到一级菜单
         //fileMenu.add(newMenuItem);
-        fileMenu.add(openMenuItem);
+        fileMenu.add(openMenu);
         fileMenu.addSeparator();       // 添加一条分割线
         fileMenu.add(exitMenuItem);
         fileMenu.add(saveMenuItem);
+
+        JMenuItem imageMenuItem = new JMenuItem("图片");    //创建子菜单
+        JMenuItem trainMenuItem = new JMenuItem("训练集");
+        //JMenuItem trainMenuItem=new JMenuItem("包");
+        //JMenuItem jmi4=new JMenuItem("类");
+        openMenu.add(imageMenuItem);
+        openMenu.add(trainMenuItem);
 
         /*
          * 菜单项的点击/状态改变事件监听，事件监听可以直接设置在具体的子菜单上
          */
 
-        // 设置 "打开" 子菜单被点击的监听器
-        openMenuItem.addActionListener(new ActionListener() {
+        // 设置 "打开图片" 子菜单被点击的监听器
+        imageMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("打开  被点击");
+                System.out.println("打开图片  被点击");
 
                 FileDialog fd = new FileDialog(jf, "选择图片");
                 fd.setVisible(true);
@@ -139,6 +159,30 @@ public class Main {
                 imageIcon = new ImageIcon(imagePath);
 
                 setImageIcon(imageIcon, imageJLabel, myPanel1);
+            }
+        });
+        // 设置 "打开" 子菜单被点击的监听器
+        trainMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("打开训练集  被点击");
+
+//                String dir = null;
+//                FileDialog fd = new FileDialog(jf, "选择图片");
+//                fd.setVisible(true);
+
+                String filePath = null;
+
+
+                JFileChooser fileChooser = new JFileChooser("data");
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnVal = fileChooser.showOpenDialog(fileChooser);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    filePath = fileChooser.getSelectedFile().getAbsolutePath();//这个就是你选择的文件夹的路径
+                }
+                String dataFolder = filePath;
+                System.out.println(dataFolder);
+
             }
         });
         // 设置 "关闭" 子菜单被点击的监听器
@@ -229,19 +273,19 @@ public class Main {
                 if (response == 0) {
                     if (editImage != null) {
                         editImage = EdgeDetectionDao.INSTANCE.sobel1ByImage(editImage);
-                    }else{
+                    } else {
                         editImage = EdgeDetectionDao.INSTANCE.sobel1(imagePath);
                     }
                 } else if (response == 1) {
                     if (editImage != null) {
                         editImage = EdgeDetectionDao.INSTANCE.sobel2ByImage(editImage);
-                    }else{
+                    } else {
                         editImage = EdgeDetectionDao.INSTANCE.sobel2(imagePath);
                     }
                 } else if (response == 2) {
                     if (editImage != null) {
                         editImage = EdgeDetectionDao.INSTANCE.sobel3ByImage(editImage);
-                    }else{
+                    } else {
                         editImage = EdgeDetectionDao.INSTANCE.sobel3(imagePath);
                     }
                 }
@@ -270,32 +314,171 @@ public class Main {
 
                 if (isEdge) {
                     if (response == 0) {
-                        editImage = HoughDao.INSTANCE.houghEditByImage(1,editImage);
+                        editImage = HoughDao.INSTANCE.houghEditByImage(1, editImage);
                     } else if (response == 1) {
-                        editImage = HoughDao.INSTANCE.houghEditByImage(2,editImage);
+                        editImage = HoughDao.INSTANCE.houghEditByImage(2, editImage);
                     } else if (response == 2) {
-                        editImage = HoughDao.INSTANCE.houghEditByImage(3,editImage);
+                        editImage = HoughDao.INSTANCE.houghEditByImage(3, editImage);
                     }
                     editImageIcon = new ImageIcon(editImage);
                     setImageIcon(editImageIcon, editImageJLabel, myPanel2);
                 } else {
                     if (response == 0) {
-                        editImage = HoughDao.INSTANCE.houghEdit(1,imagePath);
+                        editImage = HoughDao.INSTANCE.houghEdit(1, imagePath);
                     } else if (response == 1) {
-                        editImage = HoughDao.INSTANCE.houghEdit(2,imagePath);
+                        editImage = HoughDao.INSTANCE.houghEdit(2, imagePath);
                     } else if (response == 2) {
-                        editImage = HoughDao.INSTANCE.houghEdit(3,imagePath);
+                        editImage = HoughDao.INSTANCE.houghEdit(3, imagePath);
                     }
-//                    if (response == 0) {
-//                        //this.setTitle("您按下了第OK按钮 ");
-//                    } else if (response == 1) {
-//                        //this.setTitle("您按下了第Cancel按钮 ");
-//                    } else if (response == 2) {
-//                        //this.setTitle("您按下了第Help按钮 ");
-//                    }
                     editImageIcon = new ImageIcon(editImage);
                     setImageIcon(editImageIcon, editImageJLabel, myPanel2);
                 }
+            }
+        });
+    }
+
+    /**
+     * 图像检索菜单初始化
+     *
+     * @param bowMenu
+     */
+    public void initBowMenu(@NotNull JMenu bowMenu) {
+        /*
+         * 创建 "文件" 一级菜单的子菜单
+         */
+        //JMenuItem newMenuItem = new JMenuItem("新建");
+        JMenuItem trainMenuItem = new JMenuItem("训练");
+        JMenuItem testMenuItem = new JMenuItem("测试");
+        JMenuItem categoryMenuItem = new JMenuItem("识别");
+        // 子菜单添加到一级菜单
+        bowMenu.add(trainMenuItem);
+        bowMenu.addSeparator();       // 添加一条分割线
+        bowMenu.add(testMenuItem);
+        bowMenu.add(categoryMenuItem);
+
+        /*
+         * 菜单项的点击/状态改变事件监听，事件监听可以直接设置在具体的子菜单上
+         */
+
+        // 设置 "训练" 子菜单被点击的监听器
+        trainMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("训练  被点击");
+
+            }
+        });
+        // 设置 "测试" 子菜单被点击的监听器
+        testMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("测试  被点击");
+
+            }
+        });
+        // 设置 "识别" 子菜单被点击的监听器
+        categoryMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("识别  被点击");
+
+            }
+        });
+    }
+
+    /**
+     * 人脸图像识别菜单初始化
+     *
+     * @param ldaMenu
+     */
+    public void initLdaMenu(@NotNull JMenu ldaMenu) {
+        /*
+         * 创建 "文件" 一级菜单的子菜单
+         */
+        JMenuItem trainMenuItem = new JMenuItem("训练");
+        JMenuItem testMenuItem = new JMenuItem("测试");
+        JMenuItem categoryMenuItem = new JMenuItem("识别");
+        // 子菜单添加到一级菜单
+        ldaMenu.add(trainMenuItem);
+        ldaMenu.addSeparator();       // 添加一条分割线
+        ldaMenu.add(testMenuItem);
+        ldaMenu.add(categoryMenuItem);
+
+        /*
+         * 菜单项的点击/状态改变事件监听，事件监听可以直接设置在具体的子菜单上
+         */
+
+        // 设置 "训练" 子菜单被点击的监听器
+        trainMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("训练  被点击");
+
+            }
+        });
+        // 设置 "测试" 子菜单被点击的监听器
+        testMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("测试  被点击");
+
+            }
+        });
+        // 设置 "识别" 子菜单被点击的监听器
+        categoryMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("识别  被点击");
+
+            }
+        });
+    }
+
+    /**
+     * 图像检索菜单初始化
+     *
+     * @param numberMenu
+     */
+    public void initNumberMenu(@NotNull JMenu numberMenu) {
+        /*
+         * 创建 "文件" 一级菜单的子菜单
+         */
+        //JMenuItem newMenuItem = new JMenuItem("新建");
+        JMenuItem trainMenuItem = new JMenuItem("训练");
+        JMenuItem testMenuItem = new JMenuItem("测试");
+        JMenuItem categoryMenuItem = new JMenuItem("识别");
+        // 子菜单添加到一级菜单
+        numberMenu.add(trainMenuItem);
+        numberMenu.addSeparator();       // 添加一条分割线
+        numberMenu.add(testMenuItem);
+        numberMenu.add(categoryMenuItem);
+
+        /*
+         * 菜单项的点击/状态改变事件监听，事件监听可以直接设置在具体的子菜单上
+         */
+
+        // 设置 "训练" 子菜单被点击的监听器
+        trainMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("训练  被点击");
+
+            }
+        });
+        // 设置 "测试" 子菜单被点击的监听器
+        testMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("测试  被点击");
+
+            }
+        });
+        // 设置 "识别" 子菜单被点击的监听器
+        categoryMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("识别  被点击");
+
             }
         });
     }
