@@ -128,8 +128,19 @@ object BowMenu {
                 }
             }
             println("正确次数:$yes")
+            //(yes as Double)/(total as Double)
             //BowDao.categoryBySvm(dataFolder, testFolder, resultFolder, templateFolder, 1)
-
+            val options = arrayOf<Any>("确定")
+            val response = JOptionPane.showOptionDialog(
+                null,
+                "正确率${(yes.toDouble())/(total.toDouble())}",
+                "图像测试",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+            )
         }
 
         // 设置 "识别" 子菜单被点击的监听器
