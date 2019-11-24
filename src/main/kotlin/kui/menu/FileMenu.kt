@@ -14,10 +14,7 @@ import java.awt.FileDialog
 import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
-import javax.swing.ImageIcon
-import javax.swing.JFileChooser
-import javax.swing.JMenu
-import javax.swing.JMenuItem
+import javax.swing.*
 
 object FileMenu {
     /**
@@ -48,7 +45,7 @@ object FileMenu {
         // 设置 "打开图片" 子菜单被点击的监听器
         imageMenuItem.addActionListener {
             println("打开图片  被点击")
-            val fd = FileDialog(jf, "选择图片")
+            val fd = FileDialog(jf as JFrame, "选择图片")
             fd.isVisible = true
             imagePath = fd.directory + fd.file
             println(imagePath)
@@ -58,9 +55,7 @@ object FileMenu {
         // 设置 "打开" 子菜单被点击的监听器
         trainMenuItem.addActionListener {
             println("打开训练集  被点击")
-            //                String dir = null;
-            //                FileDialog fd = new FileDialog(jf, "选择图片");
-            //                fd.setVisible(true);
+
             var filePath: String? = null
             val fileChooser = JFileChooser("data")
             fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
