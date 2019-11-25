@@ -3,6 +3,7 @@ package kui.menu
 import bow.BowDao
 import kui.ImageJFrame
 import kui.ImageJFrame.imagePath
+import kui.util.MenuUtil
 import second.edgeDetection.EdgeDetectionDao
 import java.awt.image.BufferedImage
 import java.io.File
@@ -58,7 +59,7 @@ object BowMenu {
         // 设置 "设置训练目录" 子菜单被点击的监听器
         setTrainMenuItem.addActionListener {
             println("设置训练目录  被点击")
-            trainFolder = getPath()
+            trainFolder = MenuUtil.getPath()
             dataFolder = BowDao.getDataFolder(trainFolder)
             initFolder()
             println(trainFolder)
@@ -84,7 +85,7 @@ object BowMenu {
         // 设置 "设置测试目录" 子菜单被点击的监听器
         setTest.addActionListener {
             println("设置测试目录  被点击")
-            testFolder = getPath()
+            testFolder = MenuUtil.getPath()
             dataFolder = BowDao.getDataFolder(testFolder)
             initFolder()
         }
@@ -163,16 +164,6 @@ object BowMenu {
                 }
             }
         }
-    }
-
-    private fun getPath(): String {
-        val fileChooser = JFileChooser("data")
-        fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-        val returnVal = fileChooser.showOpenDialog(fileChooser)
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            return fileChooser.selectedFile.absolutePath //这个就是你选择的文件夹的路径
-        }
-        return ""
     }
 
     private fun initFolder() {

@@ -25,7 +25,13 @@ import java.io.File
 import java.io.FileWriter
 
 object Lda {
-    fun getFileList(filename: String, index: Int) {
+    fun getFileList(
+        filename: String,
+        index: Int,
+        imgTrainListPath: String,
+        testFilePath: String,
+        templatesFilePath: String
+    ) {
         val imgList = java.util.ArrayList<String>()
         val templates = java.util.ArrayList<String>()
         val test = java.util.ArrayList<String>()
@@ -48,22 +54,22 @@ object Lda {
             }
         }
         try {
-            val fileWriter1 = FileWriter("data/ldaData/imgTrainList.txt")
+            val fileWriter1 = FileWriter(imgTrainListPath)
             val bw1 = BufferedWriter(fileWriter1)
             for (file in imgList) {
                 bw1.write(file + "\n")
             }
             bw1.close()
             fileWriter1.close()
-            val fileWriter2 = FileWriter("data/ldaData/templates.txt")
+            val fileWriter2 = FileWriter(templatesFilePath)
             val bw2 = BufferedWriter(fileWriter2)
             for (file in templates) {
                 bw2.write(file + "\n")
             }
             bw2.close()
             fileWriter2.close()
-            if (index != 0){
-                val fileWriter3 = FileWriter("data/ldaData/test.txt")
+            if (index != 0) {
+                val fileWriter3 = FileWriter(testFilePath)
                 val bw3 = BufferedWriter(fileWriter3)
                 for (file in test) {
                     bw3.write(file + "\n")
@@ -80,19 +86,19 @@ object Lda {
         var mat = imread(src.absolutePath)
         var dst = Mat()
         when (mat.channels()) {
-            1 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC1,Mat())
-            3 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC3,Mat())
+            1 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC1, Mat())
+            3 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC3, Mat())
             else -> dst = mat
         }
         return dst
     }
 
-    private fun removeExtention(full_name: String, separator: String): List<String> {
+    fun removeExtention(full_name: String, separator: String): List<String> {
         var lastIndex = full_name.split(separator);
         return lastIndex
     }
 
-    fun readTrain(filename: String,images: MatVector,labels: ArrayList<Int>) {
+    fun readTrain(filename: String, images: MatVector, labels: ArrayList<Int>) {
         val file = File(filename)
         for (image in file.readLines()) {
             val imagePath = removeExtention(image, ";")
@@ -101,7 +107,7 @@ object Lda {
         }
     }
 
-    fun readCsv(filename: String,images: ArrayList<Mat>,labels: ArrayList<Int>) {
+    fun readCsv(filename: String, images: ArrayList<Mat>, labels: ArrayList<Int>) {
         val file = File(filename)
         for (image in file.readLines()) {
             val imagePath = removeExtention(image, ";")
@@ -121,20 +127,20 @@ object Lda {
         }
         val labels = Mat(320, 1, CV_32SC1)
         val model = FisherFaceRecognizer.create()
-        model.train(trainImages,labels)
+        model.train(trainImages, labels)
         model.save("data/MyFaceFisherModel.xml")
     }
 
-    fun test(){
+    fun test() {
         var testImages = ArrayList<Mat>()
         var testLabels = ArrayList<Int>()
-        readCsv("data/test.txt",testImages,testLabels)
+        readCsv("data/test.txt", testImages, testLabels)
         val model = FisherFaceRecognizer.create()
         model.read("data/MyFaceFisherModel.xml")
-        testImages.forEach{
+        testImages.forEach {
             var predictedLabel = IntPointer()
             var confidence = DoublePointer()
-            model.predict(it,predictedLabel,confidence)
+            model.predict(it, predictedLabel, confidence)
             println(predictedLabel)
         }
     }
