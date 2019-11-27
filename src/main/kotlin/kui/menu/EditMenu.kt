@@ -1,8 +1,11 @@
 package kui.menu
 
+import caffe.CaffeDao
+import edit.EditDao
 import first.gaussian.GaussianDao
 import first.histogram.HistogramDao
 import kui.ImageJFrame
+import kui.util.MenuUtil
 import second.edgeDetection.EdgeDetectionDao
 import second.hough.HoughDao
 import javax.swing.ImageIcon
@@ -23,11 +26,18 @@ object EditMenu {
         val histogramEqualizationMenuItem = JMenuItem("直方图均衡化")
         val edgeDetectionMenuItem = JMenuItem("边缘检测")
         val houghLineMenuItem = JMenuItem("直线检测")
+        val featuresMenuItem = JMenuItem("特征点检测")
+        val itemMenuItem = JMenuItem("物体检测")
+        val itemNameMenuItem = JMenuItem("物体识别")
+
         // 子菜单添加到一级菜单
         editMenu.add(drynessMenuItem)
         editMenu.add(histogramEqualizationMenuItem)
         editMenu.add(edgeDetectionMenuItem)
         editMenu.add(houghLineMenuItem)
+        editMenu.add(featuresMenuItem)
+        editMenu.add(itemMenuItem)
+        editMenu.add(itemNameMenuItem)
         // 设置 "去燥" 子菜单被点击的监听器
         drynessMenuItem.addActionListener {
             println("去燥  被点击")
@@ -121,6 +131,78 @@ object EditMenu {
                     ImageJFrame.editImageIcon!!,
                     ImageJFrame.editImageJLabel!!,
                     ImageJFrame.myPanel2
+                )
+            }
+        }
+        // 设置 "特征点检测" 子菜单被点击的监听器
+        featuresMenuItem.addActionListener {
+            println("特征点检测  被点击")
+            //editImage = HoughDao.INSTANCE.houghEdit(imagePath);
+            val options = arrayOf<Any>("方案1", "方案2")
+            val response = JOptionPane.showOptionDialog(
+                null,
+                "特征点检测方案",
+                "特征点检测",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+            )
+            ImageJFrame.imagePath?.let { path ->
+                var savePath = MenuUtil.getPath()
+                if (response == 0) {
+                    savePath += "/s" + MenuUtil.getImageName(path,"\\")
+                    EditDao.surf(path, savePath)
+                    ImageJFrame.editImage = MenuUtil.getImg(savePath)
+                } else if (response == 1) {
+                    savePath += "/ch" + MenuUtil.getImageName(path,"\\")
+                    EditDao.cornerHairrs(path, savePath)
+                    ImageJFrame.editImage = MenuUtil.getImg(savePath)
+                }
+                ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)
+                ImageJFrame.setImageIcon(
+                    ImageJFrame.editImageIcon!!,
+                    ImageJFrame.editImageJLabel!!,
+                    ImageJFrame.myPanel2
+                )
+            }
+        }
+        // 设置 "物体检测" 子菜单被点击的监听器
+        itemMenuItem.addActionListener {
+            println("物体检测  被点击")
+            //editImage = HoughDao.INSTANCE.houghEdit(imagePath);
+
+            ImageJFrame.imagePath?.let { path ->
+                var savePath = MenuUtil.getPath()
+                savePath += "/Caffe" + MenuUtil.getImageName(path,"\\")
+                CaffeDao.caffe(path, savePath)
+                ImageJFrame.editImage = MenuUtil.getImg(savePath)
+                ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)
+                ImageJFrame.setImageIcon(
+                    ImageJFrame.editImageIcon!!,
+                    ImageJFrame.editImageJLabel!!,
+                    ImageJFrame.myPanel2
+                )
+            }
+        }
+        // 设置 "物体识别" 子菜单被点击的监听器
+        itemNameMenuItem.addActionListener {
+            println("物体识别  被点击")
+            //editImage = HoughDao.INSTANCE.houghEdit(imagePath);
+
+            ImageJFrame.imagePath?.let { path ->
+                val itemType = CaffeDao.getItemType(path)
+                val options = arrayOf<Any>("确定")
+                val response = JOptionPane.showOptionDialog(
+                    null,
+                    "该物体为$itemType",
+                    "物体识别",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
                 )
             }
         }

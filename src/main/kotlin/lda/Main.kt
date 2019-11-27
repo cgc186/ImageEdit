@@ -1,8 +1,8 @@
 package lda
 
-import org.opencv.core.Core
-import org.opencv.core.CvType
-import org.opencv.core.Mat
+//import org.opencv.core.Core
+//import org.opencv.core.CvType
+//import org.opencv.core.Mat
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter

@@ -13,13 +13,13 @@ package lda
 //import org.bytedeco.javacpp.opencv_face.FisherFaceRecognizer
 //import org.bytedeco.javacpp.opencv_imgcodecs.imread
 
-import org.bytedeco.javacpp.DoublePointer
-import org.bytedeco.javacpp.IntPointer
-import org.bytedeco.opencv.global.opencv_core.*
-import org.bytedeco.opencv.global.opencv_imgcodecs.imread
-import org.bytedeco.opencv.opencv_core.Mat
-import org.bytedeco.opencv.opencv_core.MatVector
-import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
+//import org.bytedeco.javacpp.DoublePointer
+//import org.bytedeco.javacpp.IntPointer
+//import org.bytedeco.opencv.global.opencv_core.*
+//import org.bytedeco.opencv.global.opencv_imgcodecs.imread
+//import org.bytedeco.opencv.opencv_core.Mat
+//import org.bytedeco.opencv.opencv_core.MatVector
+//import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -82,67 +82,67 @@ object Lda {
         }
     }
 
-    fun norm0255(src: File): Mat {
-        var mat = imread(src.absolutePath)
-        var dst = Mat()
-        when (mat.channels()) {
-            1 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC1, Mat())
-            3 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC3, Mat())
-            else -> dst = mat
-        }
-        return dst
-    }
-
+//    fun norm0255(src: File): Mat {
+//        var mat = imread(src.absolutePath)
+//        var dst = Mat()
+//        when (mat.channels()) {
+//            1 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC1, Mat())
+//            3 -> normalize(mat, dst, 0.0, 255.0, NORM_MINMAX, CV_8UC3, Mat())
+//            else -> dst = mat
+//        }
+//        return dst
+//    }
+//
     fun removeExtention(full_name: String, separator: String): List<String> {
         var lastIndex = full_name.split(separator);
         return lastIndex
     }
 
-    fun readTrain(filename: String, images: MatVector, labels: ArrayList<Int>) {
-        val file = File(filename)
-        for (image in file.readLines()) {
-            val imagePath = removeExtention(image, ";")
-            images.push_back(imread(imagePath[0]))
-            labels.add(imagePath[1].toInt())
-        }
-    }
-
-    fun readCsv(filename: String, images: ArrayList<Mat>, labels: ArrayList<Int>) {
-        val file = File(filename)
-        for (image in file.readLines()) {
-            val imagePath = removeExtention(image, ";")
-            images.add(imread(imagePath[0]))
-            labels.add(imagePath[1].toInt())
-        }
-    }
-
-    fun train() {
-        val trainImages = MatVector()
-
-        val file = File("data/imgTrainList.txt")
-        val listFiles = file.listFiles()
-        for (image in file.readLines()) {
-            val imagePath = removeExtention(image, ";")
-            trainImages.push_back(imread(imagePath[0]))
-        }
-        val labels = Mat(320, 1, CV_32SC1)
-        val model = FisherFaceRecognizer.create()
-        model.train(trainImages, labels)
-        model.save("data/MyFaceFisherModel.xml")
-    }
-
-    fun test() {
-        var testImages = ArrayList<Mat>()
-        var testLabels = ArrayList<Int>()
-        readCsv("data/test.txt", testImages, testLabels)
-        val model = FisherFaceRecognizer.create()
-        model.read("data/MyFaceFisherModel.xml")
-        testImages.forEach {
-            var predictedLabel = IntPointer()
-            var confidence = DoublePointer()
-            model.predict(it, predictedLabel, confidence)
-            println(predictedLabel)
-        }
-    }
+//    fun readTrain(filename: String, images: MatVector, labels: ArrayList<Int>) {
+//        val file = File(filename)
+//        for (image in file.readLines()) {
+//            val imagePath = removeExtention(image, ";")
+//            images.push_back(imread(imagePath[0]))
+//            labels.add(imagePath[1].toInt())
+//        }
+//    }
+//
+//    fun readCsv(filename: String, images: ArrayList<Mat>, labels: ArrayList<Int>) {
+//        val file = File(filename)
+//        for (image in file.readLines()) {
+//            val imagePath = removeExtention(image, ";")
+//            images.add(imread(imagePath[0]))
+//            labels.add(imagePath[1].toInt())
+//        }
+//    }
+//
+//    fun train() {
+//        val trainImages = MatVector()
+//
+//        val file = File("data/imgTrainList.txt")
+//        val listFiles = file.listFiles()
+//        for (image in file.readLines()) {
+//            val imagePath = removeExtention(image, ";")
+//            trainImages.push_back(imread(imagePath[0]))
+//        }
+//        val labels = Mat(320, 1, CV_32SC1)
+//        val model = FisherFaceRecognizer.create()
+//        model.train(trainImages, labels)
+//        model.save("data/MyFaceFisherModel.xml")
+//    }
+//
+//    fun test() {
+//        var testImages = ArrayList<Mat>()
+//        var testLabels = ArrayList<Int>()
+//        readCsv("data/test.txt", testImages, testLabels)
+//        val model = FisherFaceRecognizer.create()
+//        model.read("data/MyFaceFisherModel.xml")
+//        testImages.forEach {
+//            var predictedLabel = IntPointer()
+//            var confidence = DoublePointer()
+//            model.predict(it, predictedLabel, confidence)
+//            println(predictedLabel)
+//        }
+//    }
 }
 

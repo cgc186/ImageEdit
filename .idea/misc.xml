@@ -3,6 +3,7 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectPlainTextFileTypeManager">
     <file url="file://$PROJECT_DIR$/src/coding/bow/util/KDTree.kt" />
+    <file url="file://$PROJECT_DIR$/src/main/kotlin/edit/Mat2BufImg.kt" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_10" default="false" project-jdk-name="10" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
