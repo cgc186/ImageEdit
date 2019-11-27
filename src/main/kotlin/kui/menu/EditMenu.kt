@@ -27,8 +27,10 @@ object EditMenu {
         val edgeDetectionMenuItem = JMenuItem("边缘检测")
         val houghLineMenuItem = JMenuItem("直线检测")
         val featuresMenuItem = JMenuItem("特征点检测")
+        val imageClusterMenuItem = JMenuItem("图像分割");
         val itemMenuItem = JMenuItem("物体检测")
         val itemNameMenuItem = JMenuItem("物体识别")
+
 
         // 子菜单添加到一级菜单
         editMenu.add(drynessMenuItem)
@@ -36,6 +38,7 @@ object EditMenu {
         editMenu.add(edgeDetectionMenuItem)
         editMenu.add(houghLineMenuItem)
         editMenu.add(featuresMenuItem)
+        editMenu.add(imageClusterMenuItem)
         editMenu.add(itemMenuItem)
         editMenu.add(itemNameMenuItem)
         // 设置 "去燥" 子菜单被点击的监听器
@@ -158,6 +161,40 @@ object EditMenu {
                 } else if (response == 1) {
                     savePath += "/ch" + MenuUtil.getImageName(path,"\\")
                     EditDao.cornerHairrs(path, savePath)
+                    ImageJFrame.editImage = MenuUtil.getImg(savePath)
+                }
+                ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)
+                ImageJFrame.setImageIcon(
+                    ImageJFrame.editImageIcon!!,
+                    ImageJFrame.editImageJLabel!!,
+                    ImageJFrame.myPanel2
+                )
+            }
+        }
+        // 设置 "图像分割" 子菜单被点击的监听器
+        imageClusterMenuItem.addActionListener {
+            println("图像分割  被点击")
+            //editImage = HoughDao.INSTANCE.houghEdit(imagePath);
+            val options = arrayOf<Any>("方案1", "方案2")
+            val response = JOptionPane.showOptionDialog(
+                null,
+                "图像分割方案",
+                "图像分割",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+            )
+            ImageJFrame.imagePath?.let { path ->
+                var savePath = MenuUtil.getPath()
+                if (response == 0) {
+                    savePath += "/t1" + MenuUtil.getImageName(path,"\\")
+                    EditDao.imageCluster(path, savePath,1)
+                    ImageJFrame.editImage = MenuUtil.getImg(savePath)
+                } else if (response == 1) {
+                    savePath += "/t2" + MenuUtil.getImageName(path,"\\")
+                    EditDao.imageCluster(path, savePath,2)
                     ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 }
                 ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)

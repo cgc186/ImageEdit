@@ -166,17 +166,12 @@ public class ImageCluster {
         Color c4 = new Color(0, 0, 0);
         BufferedImage nbi = new BufferedImage(source.length, source[0].length, BufferedImage.TYPE_INT_RGB);
 
-        int cc1 = 0;
-        int cc2 = 0;
-        int cc3 = 0;
-        int cc4 = 0;
-
         int[] arr = new int[k];
 
         for (int i = 0; i < source.length; i++) {
             for (int j = 0; j < source[0].length; j++) {
                 for (int k = 0; k < arr.length; k++) {
-                    if (source[i][j].group == k){
+                    if (source[i][j].group == k) {
                         arr[k]++;
                     }
                 }
@@ -224,8 +219,39 @@ public class ImageCluster {
         }
     }
 
+    //输出聚类好的数据
+    private void ImagedataOutType2(String path) {
+        Color c0 = new Color(255, 0, 0);
+        Color c1 = new Color(0, 255, 0);
+        Color c2 = new Color(0, 0, 255);
+        Color c3 = new Color(128, 128, 128);
+
+        Color c4 = new Color(0, 0, 0);
+        BufferedImage nbi = new BufferedImage(source.length, source[0].length, BufferedImage.TYPE_INT_RGB);
+
+
+        for (int i = 0; i < source.length; i++) {
+            for (int j = 0; j < source[0].length; j++) {
+                if (source[i][j].group == 0)
+                    nbi.setRGB(i, j, c0.getRGB());
+                else if (source[i][j].group == 1)
+                    nbi.setRGB(i, j, c1.getRGB());
+                else if (source[i][j].group == 2)
+                    nbi.setRGB(i, j, c2.getRGB());
+                else if (source[i][j].group == 3)
+                    nbi.setRGB(i, j, c3.getRGB());
+            }
+        }
+
+        try {
+            ImageIO.write(nbi, "jpg", new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //进行kmeans计算的核心函数
-    public void kmeans(String path, int k, int m) {
+    public void kmeans(String path, String savePath, int k, int m, int type) {
         imgPath = path;
         source = InitData(getImageData(path));
 		/*测试输出
@@ -255,7 +281,11 @@ public class ImageCluster {
             System.out.println("(" + center[i].r + "," + center[i].g + "," + center[i].b + ")");
         }
         System.out.println("迭代总次数：" + m);//进行图像输出，这个随意改
-        ImagedataOut("E:/test.jpg");
+        if (type==1){
+            ImagedataOut(savePath);
+        }else{
+            ImagedataOutType2(savePath);
+        }
     }
 
 }
