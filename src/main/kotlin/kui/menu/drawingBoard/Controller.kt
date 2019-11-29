@@ -1,4 +1,4 @@
-package kui.util.drawingBoard
+package kui.menu.drawingBoard
 
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener

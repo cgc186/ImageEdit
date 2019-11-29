@@ -1,12 +1,9 @@
-package kui.util.drawingBoard
+package kui.menu.drawingBoard
 
 import bpMnist.MnistDao
 import java.awt.*
 import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
-import java.io.*
-import java.net.Socket
-import java.net.UnknownHostException
 import javax.swing.JOptionPane
 
 

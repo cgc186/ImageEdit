@@ -1,6 +1,7 @@
 package kui
 
 import kui.menu.Menu
+import java.awt.Container
 import javax.swing.WindowConstants
 
 fun main() {
@@ -13,6 +14,6 @@ fun main() {
     t.jf.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
     t.resizeListener()
     t.jf.jMenuBar = Menu.menuBar
-    t.jf.contentPane = MyJSplitPane.getJSplitPane()
+    t.jf.contentPane = MyJSplitPane.getJSplitPane() as Container?
     t.jf.isVisible = true
 }

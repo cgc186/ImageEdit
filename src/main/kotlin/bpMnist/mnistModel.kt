@@ -1,5 +1,7 @@
 package bpMnist
 
+import javax.swing.JOptionPane
+
 
 object mnistModel {
     val dataPath = "E:/mnist_train.csv"
@@ -17,12 +19,8 @@ object mnistModel {
     fun train() {
         object : Thread() {
             override fun run() { //获取文件路径并处理
-                //val dataPath = dataPath.replace('\\', '/') //将文件路径中的“\”转为“/”
-                //val tabPath = tabPath.replace('\\', '/')
                 try { //训练神经网络
                     val resulthang: Int = util.rowNum //得到训练结果行数
-//                    val inputhang: Int = util2.rowNum //得到训练结果行数
-//                    val inputlie: Int = util2.colNum //得到训练结果列数
                     ProcessingData(util2) //处理数据
                     for (i in 0..0) { //训练迭代次数
                         for (index in 0 until resulthang) {
@@ -38,6 +36,7 @@ object mnistModel {
                     e.printStackTrace()
                 }
                 println("训练完成")
+                JOptionPane.showMessageDialog(null, "训练完成", "人脸检测", JOptionPane.INFORMATION_MESSAGE)
                 //View.setProgressBarString("训练完成") // 设置提示信息
             }
         }.start() //  启动进度条线程

@@ -17,8 +17,10 @@ public class LdaFace {
         String testFile = "data/ldaData/test.txt";
         String templates = "data/ldaData/templates.txt";
 
-        String s = "E:/coding/c++/lda/FaceDB_orl/001/01.png";
-        int predict = lf.predict(s, faceModelPath);
-        System.out.println(predict);
+        lf.test(testFile,templates,faceModelPath);
+
+//        String s = "E:/coding/c++/lda/FaceDB_orl/001/01.png";
+//        int predict = lf.predict(s, faceModelPath);
+//        System.out.println(predict);
     }
 }

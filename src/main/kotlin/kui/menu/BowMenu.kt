@@ -79,6 +79,7 @@ object BowMenu {
                 initFolder()
                 BowDao.train(trainFolder, templateFolder, testFolder, resultFolder)
             }
+            JOptionPane.showMessageDialog(null, "训练完成", "bow", JOptionPane.INFORMATION_MESSAGE)
         }
 
         // 设置 "查看训练结果" 子菜单被点击的监听器

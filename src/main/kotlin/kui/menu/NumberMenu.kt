@@ -1,9 +1,9 @@
 package kui.menu
 
 import bpMnist.MnistDao
-import kui.util.drawingBoard.Controller
-import kui.util.drawingBoard.Model
-import kui.util.drawingBoard.View
+import kui.menu.drawingBoard.Controller
+import kui.menu.drawingBoard.Model
+import kui.menu.drawingBoard.View
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 

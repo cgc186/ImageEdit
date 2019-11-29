@@ -66,9 +66,9 @@ object BowDao {
 
     fun getDataFolder(trainFolder: String): String {
         val strList = trainFolder.split("\\")
-        strList.forEach {
-            println(it)
-        }
+//        strList.forEach {
+//            println(it)
+//        }
         val l = strList[strList.size - 1]
         return trainFolder.substring(0, (trainFolder.length - l.length))
     }

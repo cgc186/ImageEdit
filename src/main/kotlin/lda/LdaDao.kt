@@ -38,6 +38,7 @@ object LdaDao {
     }
 
     fun train() {
+
         lf.train(imgTrainPath, faceModelPath)
     }
 
@@ -54,11 +55,11 @@ object LdaDao {
         return lf.predict(s, faceModelPath)
     }
 
-    fun getTemplate(predict: Int): String? {
+    fun getTemplate(predict: Int): String {
         if (templatesList.isEmpty()) {
             initList(templates, templatesList)
         }
-        return templatesList[predict]
+        return templatesList[predict].toString()
     }
 
     fun isRight(img: String, pre: Int): Boolean {

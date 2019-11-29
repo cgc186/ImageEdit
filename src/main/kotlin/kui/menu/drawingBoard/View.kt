@@ -1,4 +1,4 @@
-package kui.util.drawingBoard
+package kui.menu.drawingBoard
 
 import java.awt.BorderLayout
 import java.awt.GridLayout
