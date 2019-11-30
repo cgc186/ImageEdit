@@ -34,7 +34,7 @@ class HoughTransform {
         for (i in 1 until w) {
             for (j in 1 until h) {
                 //val c = Color(img.getRGB(i, j))
-                if ((img.getRGB(i, j)and 0xFFFFFF) == 0xFFFFFF) {
+                if ((img.getRGB(i, j) and 0xFFFFFF) == 0xFFFFFF) {
                     for (k in 0 until thetaDim) {
                         accumulator[k][round((i * cosTheta[k] + j * sinTheta[k]) * distDim / maxDist).toInt()]++
                     }
@@ -100,22 +100,30 @@ class HoughTransform {
             )
             println("${result.elementAt(i).thetaDim} , ${result.elementAt(i).distDim}")
 
-            println("f:"+max(
-                0,
-                result.elementAt(i).thetaDim - halfThetaWindowSize + 1
-            ))
-            println("e:"+min(
-                result.elementAt(i).thetaDim + halfThetaWindowSize,
-                accumulator.size
-            ))
-            println("f:"+max(
-                0,
-                result.elementAt(i).distDim - halfDistWindowSize + 1
-            ))
-            println("e:"+min(
-                result.elementAt(i).distDim + halfDistWindowSize,
-                accumulator[0].size
-            ))
+            println(
+                "f:" + max(
+                    0,
+                    result.elementAt(i).thetaDim - halfThetaWindowSize + 1
+                )
+            )
+            println(
+                "e:" + min(
+                    result.elementAt(i).thetaDim + halfThetaWindowSize,
+                    accumulator.size
+                )
+            )
+            println(
+                "f:" + max(
+                    0,
+                    result.elementAt(i).distDim - halfDistWindowSize + 1
+                )
+            )
+            println(
+                "e:" + min(
+                    result.elementAt(i).distDim + halfDistWindowSize,
+                    accumulator[0].size
+                )
+            )
 
             println("eightNeiborhood:::")
 

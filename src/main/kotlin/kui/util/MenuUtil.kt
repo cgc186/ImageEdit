@@ -16,10 +16,10 @@ object MenuUtil {
         return ""
     }
 
-    fun getImageName(namePath: String,type:String): String {
+    fun getImageName(namePath: String, type: String): String {
         val list = namePath.split(type)
         list.forEach { println(it) }
-        return list[list.size-1]
+        return list[list.size - 1]
     }
 
     fun getImg(path: String): BufferedImage? {

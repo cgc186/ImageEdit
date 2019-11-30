@@ -42,7 +42,7 @@ public class Bow {
         String s = b.categoryImage(img, dataFolder);
         System.out.println(s);
         //将测试图片分类
-        b.categoryBySvm(dataFolder, testFolder, resultFolder,templateFolder, 1);
+        b.categoryBySvm(dataFolder, testFolder, resultFolder, templateFolder, 1);
 
     }
 }

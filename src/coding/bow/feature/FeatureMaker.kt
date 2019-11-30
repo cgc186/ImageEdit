@@ -2,6 +2,7 @@ package bow.feature
 
 import bow.model.Feature
 import java.io.IOException
+
 /**
  * 特征提取器接口描述
  */

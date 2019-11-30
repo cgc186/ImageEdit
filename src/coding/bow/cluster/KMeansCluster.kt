@@ -5,7 +5,6 @@ import bow.util.FeatureTree
 import kotlin.collections.ArrayList
 
 
-
 class KMeansCluster : Cluster {
     /* 误差阈值 */
     private val ERROR_THRESHOLD = 1.2f
@@ -53,7 +52,7 @@ class KMeansCluster : Cluster {
             }
             error /= partition
             println("""K-Means error: $error""")
-            if (error < ERROR_THRESHOLD){
+            if (error < ERROR_THRESHOLD) {
                 break
             }
         }

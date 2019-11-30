@@ -1,14 +1,16 @@
 package caffejni;
 
 public class Caffe {
-    static{
+    static {
         System.loadLibrary("data/dll/Caffe");
     }
+
     public native void caffe(String modelFile,
                              String modelTextFile,
                              String path,
                              String savePath);
-    public native String getType(String modelTxt,String modelBin,String synSetWords,String imageFile);
+
+    public native String getType(String modelTxt, String modelBin, String synSetWords, String imageFile);
 //            "background",
 //            "aeroplane", "bicycle", "bird", "boat",
 //            "bottle", "bus", "car", "cat", "chair",
@@ -31,7 +33,7 @@ public class Caffe {
         String modelBin = "Z:/bvlc_googlenet.caffemodel";
         String synSetWords = "Z:/synset_words.txt";
         String imageFile = "Z:/1.png";
-        String s = c.getType(modelTxt, modelBin, synSetWords,imageFile);
+        String s = c.getType(modelTxt, modelBin, synSetWords, imageFile);
         System.out.println(s);
     }
 }

@@ -1,16 +1,18 @@
 package bowjni;
 
 public class Java2cpp {
-    static{
+    static {
         System.loadLibrary("data/javaToCpp");
     }
 
     public native void train(int _clusters, String dF, String tF, String tempF, String testF, String rF);
+
     public native void categoryImage(
             String trainPicName,
             String trainPicPath,
             String dataFolder
     );
+
     public native void categoryBySvm(String dataFolder, String testFolder);
 
     public static void main(String[] args) {

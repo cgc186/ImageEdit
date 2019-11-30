@@ -82,7 +82,7 @@ object Lda {
         }
     }
 
-//    fun norm0255(src: File): Mat {
+    //    fun norm0255(src: File): Mat {
 //        var mat = imread(src.absolutePath)
 //        var dst = Mat()
 //        when (mat.channels()) {

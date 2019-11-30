@@ -1,12 +1,9 @@
 package cluster;
 
-import sun.jvm.hotspot.utilities.IntArray;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -157,17 +154,10 @@ public class ImageCluster {
     }
 
     //输出聚类好的数据
-    private void ImagedataOut(String path) {
-        Color c0 = new Color(255, 0, 0);
-        Color c1 = new Color(0, 255, 0);
-        Color c2 = new Color(0, 0, 255);
-        Color c3 = new Color(128, 128, 128);
-
+    private void imageDataOut(String path) {
         Color c4 = new Color(0, 0, 0);
         BufferedImage nbi = new BufferedImage(source.length, source[0].length, BufferedImage.TYPE_INT_RGB);
-
         int[] arr = new int[k];
-
         for (int i = 0; i < source.length; i++) {
             for (int j = 0; j < source[0].length; j++) {
                 for (int k = 0; k < arr.length; k++) {
@@ -175,35 +165,20 @@ public class ImageCluster {
                         arr[k]++;
                     }
                 }
-//                if (source[i][j].group == 0)
-//                    arr[0]++;
-//                    //nbi.setRGB(i, j, c0.getRGB());
-//                else if (source[i][j].group == 1)
-//                    arr[1]++;
-//                    //nbi.setRGB(i, j, c1.getRGB());
-//                else if (source[i][j].group == 2)
-//                    arr[2]++;
-//                    //nbi.setRGB(i, j, c2.getRGB());
-//                else if (source[i][j].group == 3)
-//                    arr[3]++;
-//                //nbi.setRGB(i, j, c3.getRGB());
             }
         }
-
         int c = 0;
         for (int i = 1; i < arr.length; i++) {
             if (arr[c] < arr[i]) {
                 c = i;
             }
         }
-
         BufferedImage src = null;
         try {
             src = ImageIO.read(new File(imgPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         for (int i = 0; i < source.length; i++) {
             for (int j = 0; j < source[0].length; j++) {
                 if (source[i][j].group == c) {
@@ -211,7 +186,6 @@ public class ImageCluster {
                 }
             }
         }
-
         try {
             ImageIO.write(src, "jpg", new File(path));
         } catch (IOException e) {
@@ -227,24 +201,24 @@ public class ImageCluster {
         Color c3 = new Color(128, 128, 128);
 
         Color c4 = new Color(0, 0, 0);
-        BufferedImage nbi = new BufferedImage(source.length, source[0].length, BufferedImage.TYPE_INT_RGB);
+        BufferedImage img = new BufferedImage(source.length, source[0].length, BufferedImage.TYPE_INT_RGB);
 
 
         for (int i = 0; i < source.length; i++) {
             for (int j = 0; j < source[0].length; j++) {
                 if (source[i][j].group == 0)
-                    nbi.setRGB(i, j, c0.getRGB());
+                    img.setRGB(i, j, c0.getRGB());
                 else if (source[i][j].group == 1)
-                    nbi.setRGB(i, j, c1.getRGB());
+                    img.setRGB(i, j, c1.getRGB());
                 else if (source[i][j].group == 2)
-                    nbi.setRGB(i, j, c2.getRGB());
+                    img.setRGB(i, j, c2.getRGB());
                 else if (source[i][j].group == 3)
-                    nbi.setRGB(i, j, c3.getRGB());
+                    img.setRGB(i, j, c3.getRGB());
             }
         }
 
         try {
-            ImageIO.write(nbi, "jpg", new File(path));
+            ImageIO.write(img, "jpg", new File(path));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -254,19 +228,10 @@ public class ImageCluster {
     public void kmeans(String path, String savePath, int k, int m, int type) {
         imgPath = path;
         source = InitData(getImageData(path));
-		/*测试输出
-		for(int i=0;i<source.length;i++)
-			for(int j=0;j<source[0].length;j++)
-				System.out.println("("+source[i][j].x+","+source[i][j].y+","+source[i][j].r+","+source[i][j].g+","+source[i][j].b+")");
-		*/
         this.k = k;
         this.m = m;
         //初始化聚类中心
         initCenters(k);
-		/*测试输出
-		for (int i = 0; i < center.length; i++)
-			System.out.println("("+center[i].x+","+center[i].y+","+center[i].r+","+center[i].g+","+center[i].b+")");
-		*/
         //进行m次聚类
         for (int level = 0; level < m; level++) {
             clusterSet();
@@ -280,10 +245,10 @@ public class ImageCluster {
         for (int i = 0; i < center.length; i++) {
             System.out.println("(" + center[i].r + "," + center[i].g + "," + center[i].b + ")");
         }
-        System.out.println("迭代总次数：" + m);//进行图像输出，这个随意改
-        if (type==1){
-            ImagedataOut(savePath);
-        }else{
+        System.out.println("迭代总次数：" + m);
+        if (type == 1) {
+            imageDataOut(savePath);
+        } else {
             ImagedataOutType2(savePath);
         }
     }

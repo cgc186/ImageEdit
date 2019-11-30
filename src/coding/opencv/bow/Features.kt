@@ -74,7 +74,7 @@ class Features {
         descriptorExtractor = FastFeatureDetector.create()
         //var descriptorMacher = FlannBasedMatcher()
         descriptorMacher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE)
-        bowDescriptorExtractor =BOWImgDescriptorExtractor(descriptorExtractor, descriptorMacher)
+        bowDescriptorExtractor = BOWImgDescriptorExtractor(descriptorExtractor, descriptorMacher)
 
         //获取该目录下的所有文件名
         val dir = File(TEMPLATE_FOLDER)
@@ -126,7 +126,7 @@ class Features {
 
     // 聚类得出词典
     fun bulidVacab() {
-        val vacabFs = FileStorage(DATA_FOLDER + "vocab.xml",FileStorage.READ)
+        val vacabFs = FileStorage(DATA_FOLDER + "vocab.xml", FileStorage.READ)
 
         if (vacabFs.isOpened) {
             println("图片已经聚类，词典已经存在..")

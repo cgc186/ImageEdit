@@ -6,14 +6,14 @@ import javax.swing.WindowConstants
 
 fun main() {
 
-    val t = ImageJFrame
+    val jFrame = ImageJFrame
 
-    t.jf.setSize(800, 800)
+    jFrame.jf.setSize(800, 800)
 
-    t.jf.setLocationRelativeTo(null)
-    t.jf.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-    t.resizeListener()
-    t.jf.jMenuBar = Menu.menuBar
-    t.jf.contentPane = MyJSplitPane.getJSplitPane() as Container?
-    t.jf.isVisible = true
+    jFrame.jf.setLocationRelativeTo(null)
+    jFrame.jf.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+    jFrame.resizeListener()
+    jFrame.jf.jMenuBar = Menu.menuBar
+    jFrame.jf.contentPane = MyJSplitPane.getJSplitPane() as Container?
+    jFrame.jf.isVisible = true
 }

@@ -12,7 +12,7 @@ import bow.util.SerializationUtils
 class Classify {
     private val featureMaker = Sift()
 
-    fun classify(inputImg:String,inputModel:String){
+    fun classify(inputImg: String, inputModel: String) {
         val model: Model = SerializationUtils.loadObject(inputModel) as Model
         val classifier = model.classifier
         val categories = model.categories

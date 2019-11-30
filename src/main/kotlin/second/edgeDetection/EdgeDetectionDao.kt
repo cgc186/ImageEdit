@@ -5,13 +5,13 @@ import java.io.File
 import javax.imageio.ImageIO
 
 object EdgeDetectionDao {
-    private val edgeDetection= EdgeDetection()
+    private val edgeDetection = EdgeDetection()
 
     fun sobel1(filePath: String): BufferedImage {
         return edgeDetection.sobel1(ImageIO.read(File(filePath)))
     }
 
-    fun sobel1ByImage(img:BufferedImage): BufferedImage {
+    fun sobel1ByImage(img: BufferedImage): BufferedImage {
         return edgeDetection.sobel1(img)
     }
 
@@ -20,7 +20,7 @@ object EdgeDetectionDao {
         return edgeDetection.sobel2(ImageIO.read(File(filePath)))
     }
 
-    fun sobel2ByImage(img:BufferedImage): BufferedImage {
+    fun sobel2ByImage(img: BufferedImage): BufferedImage {
         return edgeDetection.sobel2(img)
     }
 
@@ -28,7 +28,7 @@ object EdgeDetectionDao {
         return edgeDetection.sobel3(ImageIO.read(File(filePath)))
     }
 
-    fun sobel3ByImage(img:BufferedImage): BufferedImage {
+    fun sobel3ByImage(img: BufferedImage): BufferedImage {
         return edgeDetection.sobel3(img)
     }
 

@@ -2,10 +2,10 @@ package cnn;
 
 import cnn.core.CNN;
 import cnn.core.Layer;
-import cnn.utils.ConcurentRunner;
 import cnn.core.CNN.LayerBuilder;
 import cnn.core.Layer.Size;
 import cnn.data.DataSet;
+import cnn.utils.ConcurentRunner;
 
 
 public class Main {
@@ -25,7 +25,7 @@ public class Main {
         ConcurentRunner.stop();
     }
 
-    private static void runTrain() {
+    public static CNN initCnn() {
         // 构建网络层次结构
         CNN.LayerBuilder builder = new LayerBuilder();
         // 输入层输出map大小为28×28
@@ -39,7 +39,11 @@ public class Main {
         // 采样层输出map大小为4×4,4=8/2
         builder.addLayer(Layer.buildSampLayer(new Size(2, 2)));
         builder.addLayer(Layer.buildOutputLayer(10));
-        CNN cnn = new CNN(builder, 10);
+        return new CNN(builder, 10);
+    }
+
+    public static void train() {
+        CNN cnn = initCnn();
         // 加载训练数据
         DataSet dataset = DataSet.load(TRAIN_DATA, ",", 784);
         // 开始训练模型
@@ -49,7 +53,7 @@ public class Main {
         dataset.clear();
     }
 
-    private static void runTest() {
+    public static void runTest() {
         // 加载训练好的模型
         CNN cnn = CNN.loadModel(MODEL_NAME);
         // 加载测试数据

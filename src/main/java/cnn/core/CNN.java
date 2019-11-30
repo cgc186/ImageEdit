@@ -1,7 +1,7 @@
 package cnn.core;
 
-import cnn.core.Layer.Size;
 import cnn.data.DataSet;
+import cnn.core.Layer.Size;
 import cnn.data.DataSet.Record;
 import cnn.utils.ConcurentRunner.TaskManager;
 import cnn.utils.MathUtils;
@@ -128,7 +128,7 @@ public class CNN implements Serializable {
 
         @Override
         public void run() {
-			System.out.println("输入&符号停止训练.");
+            System.out.println("输入&符号停止训练.");
             //logger.info("输入&符号停止训练.");
             while (true) {
                 try {
@@ -165,7 +165,7 @@ public class CNN implements Serializable {
                 right++;
         }
         double p = 1.0 * right / trainset.size();
-        System.out.println("计算精度为：\t"+p);
+        System.out.println("计算精度为：\t" + p);
         return p;
     }
 

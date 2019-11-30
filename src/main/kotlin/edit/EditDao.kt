@@ -2,6 +2,7 @@ package edit
 
 import caffejni.Caffe
 import cluster.ImageCluster
+
 //import org.bytedeco.javacpp.opencv_core.*
 //import org.bytedeco.javacpp.opencv_imgcodecs.imread
 //import org.bytedeco.javacpp.opencv_imgcodecs.imwrite
@@ -26,6 +27,12 @@ object EditDao {
         ic.kmeans(path, savePath, 3, 10, type)
     }
 
+    fun getPca(imgPath: String, savePath: String) {
+
+        val c = Caffe()
+        c.pca(imgPath, savePath);
+    }
+
 //    fun pca(imgPath: String, savePath: String) {
 //        val img: Mat = imread(imgPath)
 //        cvtColor(img, img, COLOR_RGB2GRAY)
@@ -35,9 +42,5 @@ object EditDao {
 //        imwrite(savePath, src)
 //    }
 
-    fun getPca(imgPath: String, savePath: String) {
 
-        val c = Caffe()
-        c.pca(imgPath, savePath);
-    }
 }

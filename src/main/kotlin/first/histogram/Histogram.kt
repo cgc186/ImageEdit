@@ -39,7 +39,7 @@ class Histogram {
         for (pos in 0 until 256) {
             count += numPixel[pos]
             probPixel[pos] = 1.0 * count / numOfPixels
-            pixel[pos] = round(probPixel[pos]*(l-1))
+            pixel[pos] = round(probPixel[pos] * (l - 1))
         }
 
         for (i in 1 until img.width) {

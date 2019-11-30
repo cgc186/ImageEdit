@@ -6,6 +6,7 @@ import bow.model.Model
 import bow.util.ClassifyUtils
 import bow.util.SerializationUtils
 import weka.classifiers.Classifier
+
 /**
  * 评估程序入口
  */
@@ -37,7 +38,7 @@ object Validate {
         start: Int, end: Int, inputModel: String
     ) {
         instanceGenerator = InstanceGenerator(validateCategories)
-        val model :Model= SerializationUtils.loadObject(inputModel) as Model
+        val model: Model = SerializationUtils.loadObject(inputModel) as Model
         classifier = model.classifier
         val samples = instanceGenerator!!
             .getSamples(imgBase, start, end)
@@ -70,5 +71,5 @@ fun main() {
 
     val inputModel = ""
 
-    Validate.validate(imgBase,validateCategories,0,80,inputModel)
+    Validate.validate(imgBase, validateCategories, 0, 80, inputModel)
 }

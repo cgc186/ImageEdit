@@ -40,10 +40,8 @@ object LdaMenu {
         ldaTrainMenu.add(startLdaTrainMenuItem)
         ldaTrainMenu.add(ldaResultMenuItem)
 
-        //val setTest = JMenuItem("设置测试目录")
         val startTestMenuItem = JMenuItem("开始测试")
 
-        //ldaTestMenuItem.add(setTest)
         ldaTestMenuItem.add(startTestMenuItem)
 
         /*
@@ -61,7 +59,12 @@ object LdaMenu {
         startLdaTrainMenuItem.addActionListener {
             println("开始训练  被点击")
             LdaDao.train()
-            JOptionPane.showMessageDialog(null, "训练完成", "人脸检测", JOptionPane.INFORMATION_MESSAGE)
+            JOptionPane.showMessageDialog(
+                null,
+                "训练完成",
+                "人脸检测",
+                JOptionPane.INFORMATION_MESSAGE
+            )
         }
 
         // 设置 "查看训练结果" 子菜单被点击的监听器
@@ -77,8 +80,8 @@ object LdaMenu {
         startTestMenuItem.addActionListener {
             println("开始测试  被点击")
             LdaDao.initTest()
-            var yes = 0
-            var total = 0
+            var yes = 0  //记录正确个数
+            var total = 0  //记录总数
 
             LdaDao.testList.forEach {
                 val predict = LdaDao.predict(it.key)
@@ -110,7 +113,7 @@ object LdaMenu {
                 )
             }
             val options = arrayOf<Any>("确定")
-            val response = JOptionPane.showOptionDialog(
+            JOptionPane.showOptionDialog(
                 null,
                 "正确率${(yes.toDouble()) / (total.toDouble())}",
                 "人脸识别测试",

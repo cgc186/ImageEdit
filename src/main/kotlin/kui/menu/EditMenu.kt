@@ -63,8 +63,8 @@ object EditMenu {
             val options = arrayOf<Any>("sobel1", "sobel2", "sobel3")
             val response = JOptionPane.showOptionDialog(
                 null,
-                "这是个选项对话框，用户可以选择自己的按钮的个数",
-                "选项对话框标题",
+                "请选择所使用的检测方法",
+                "边缘检测",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -101,8 +101,8 @@ object EditMenu {
             val options = arrayOf<Any>("方案1", "方案2", "方案3")
             val response = JOptionPane.showOptionDialog(
                 null,
-                "这是个选项对话框，用户可以选择自己的按钮的个数",
-                "选项对话框标题",
+                "请选择直线检测方案",
+                "直线检测",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -128,22 +128,11 @@ object EditMenu {
                     ImageJFrame.myPanel2
                 )
             } else {
-                when (response) {
-                    0 -> {
-                        ImageJFrame.editImage = HoughDao.houghEdit(1, ImageJFrame.imagePath!!)
-                    }
-                    1 -> {
-                        ImageJFrame.editImage = HoughDao.houghEdit(2, ImageJFrame.imagePath!!)
-                    }
-                    2 -> {
-                        ImageJFrame.editImage = HoughDao.houghEdit(3, ImageJFrame.imagePath!!)
-                    }
-                }
-                ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)
-                ImageJFrame.setImageIcon(
-                    ImageJFrame.editImageIcon!!,
-                    ImageJFrame.editImageJLabel!!,
-                    ImageJFrame.myPanel2
+                JOptionPane.showMessageDialog(
+                    null,
+                    "请先进行边缘检测",
+                    "直线检测",
+                    JOptionPane.INFORMATION_MESSAGE
                 )
             }
         }
@@ -165,11 +154,11 @@ object EditMenu {
             ImageJFrame.imagePath?.let { path ->
                 var savePath = MenuUtil.getPath()
                 if (response == 0) {
-                    savePath += "/s" + MenuUtil.getImageName(path,"\\")
+                    savePath += "/s" + MenuUtil.getImageName(path, "\\")
                     EditDao.surf(path, savePath)
                     ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 } else if (response == 1) {
-                    savePath += "/ch" + MenuUtil.getImageName(path,"\\")
+                    savePath += "/ch" + MenuUtil.getImageName(path, "\\")
                     EditDao.cornerHairrs(path, savePath)
                     ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 }
@@ -187,7 +176,7 @@ object EditMenu {
 
             ImageJFrame.imagePath?.let { path ->
                 var savePath = MenuUtil.getPath()
-                savePath += "/pca" + MenuUtil.getImageName(path,"\\")
+                savePath += "/pca" + MenuUtil.getImageName(path, "\\")
                 EditDao.getPca(path, savePath)
                 ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)
@@ -216,12 +205,12 @@ object EditMenu {
             ImageJFrame.imagePath?.let { path ->
                 var savePath = MenuUtil.getPath()
                 if (response == 0) {
-                    savePath += "/t1" + MenuUtil.getImageName(path,"\\")
-                    EditDao.imageCluster(path, savePath,1)
+                    savePath += "/t1" + MenuUtil.getImageName(path, "\\")
+                    EditDao.imageCluster(path, savePath, 1)
                     ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 } else if (response == 1) {
-                    savePath += "/t2" + MenuUtil.getImageName(path,"\\")
-                    EditDao.imageCluster(path, savePath,2)
+                    savePath += "/t2" + MenuUtil.getImageName(path, "\\")
+                    EditDao.imageCluster(path, savePath, 2)
                     ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 }
                 ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)
@@ -235,11 +224,9 @@ object EditMenu {
         // 设置 "物体检测" 子菜单被点击的监听器
         itemMenuItem.addActionListener {
             println("物体检测  被点击")
-            //editImage = HoughDao.INSTANCE.houghEdit(imagePath);
-
             ImageJFrame.imagePath?.let { path ->
                 var savePath = MenuUtil.getPath()
-                savePath += "/Caffe" + MenuUtil.getImageName(path,"\\")
+                savePath += "/Caffe" + MenuUtil.getImageName(path, "\\")
                 CaffeDao.caffe(path, savePath)
                 ImageJFrame.editImage = MenuUtil.getImg(savePath)
                 ImageJFrame.editImageIcon = ImageIcon(ImageJFrame.editImage)

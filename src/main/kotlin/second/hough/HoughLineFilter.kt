@@ -17,7 +17,7 @@ class HoughLineFilter {
 
     var size = 6  //30
 
-    fun setAttribute(houghSpace:Int,threshold: Float, size: Int) {
+    fun setAttribute(houghSpace: Int, threshold: Float, size: Int) {
         this.houghSpace = houghSpace
         this.threshold = threshold
         this.size = size

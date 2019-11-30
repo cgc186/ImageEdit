@@ -4,18 +4,19 @@ import cnn.core.CNN
 import cnn.core.CNN.LayerBuilder
 import cnn.core.Layer
 import cnn.data.DataSet
+import java.io.BufferedReader
+import java.io.FileReader
 
 object CnnDao {
     private const val MODEL_NAME = "data/mnist/model/model.cnn"
 
     private const val TRAIN_DATA = "data/mnist/train.format"
 
-    private const val TEST_DATA = "data/mnist/test.format"
+    private const val TEST_DATA = "data/mnist/test2.format"
 
     private const val TEST_PREDICT = "data/mnist/test.predict"
 
-    private fun runTrain() {
-        // 构建网络层次结构
+    fun initCnn(): CNN { // 构建网络层次结构
         val builder = LayerBuilder()
         // 输入层输出map大小为28×28
         builder.addLayer(Layer.buildInputLayer(Layer.Size(28, 28)))
@@ -28,7 +29,12 @@ object CnnDao {
         // 采样层输出map大小为4×4,4=8/2
         builder.addLayer(Layer.buildSampLayer(Layer.Size(2, 2)))
         builder.addLayer(Layer.buildOutputLayer(10))
-        val cnn = CNN(builder, 10)
+        return CNN(builder, 10)
+    }
+
+    fun train() {
+        // 构建CNN
+        val cnn = initCnn()
         // 加载训练数据
         val dataset = DataSet.load(TRAIN_DATA, ",", 784)
         // 开始训练模型
@@ -38,12 +44,20 @@ object CnnDao {
         dataset.clear()
     }
 
-    private fun runTest() { // 加载训练好的模型
+    private fun test() { // 加载训练好的模型
         val cnn = CNN.loadModel(MODEL_NAME)
         // 加载测试数据
         val testSet = DataSet.load(TEST_DATA, ",", -1)
         // 预测结果
         cnn.predict(testSet, TEST_PREDICT)
         testSet.clear()
+    }
+
+    fun predict(): String? {
+        test()
+        val result = BufferedReader(FileReader(TEST_PREDICT))
+        val num = result.readLine()
+        println(num)
+        return num
     }
 }

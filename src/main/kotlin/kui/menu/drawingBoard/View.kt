@@ -43,7 +43,7 @@ object View : JFrame() {
         contentPane.add(btnsPanel, BorderLayout.EAST)
         contentPane.add(panPanel, BorderLayout.CENTER)
         //设置窗体属性
-        title = "基于BP的手写数字识别程序"
+        title = "手写数字识别板"
         this.setSize(480, 400)
         setLocationRelativeTo(null)
         this.isResizable = false

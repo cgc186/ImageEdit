@@ -265,7 +265,7 @@ class FeaturesDump {
                 val kp = MatOfKeyPoint()
                 var test = Mat()
                 featureDetector!!.detect(grayPic, kp)
-                descriptorExtractor!!.compute(grayPic,kp,test)
+                descriptorExtractor!!.compute(grayPic, kp, test)
 //                featureDetector!!.detectAndCompute(grayPic,noArray(),kp,test)
 
                 var sign = 0

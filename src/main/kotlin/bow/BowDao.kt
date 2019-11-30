@@ -34,7 +34,7 @@ object BowDao {
         resultFolder: String,
         templateFolder: String,
         flag: Int
-    ){
+    ) {
         bow.categoryBySvm(dataFolder, testFolder, resultFolder, templateFolder, flag)
     }
 

@@ -1,4 +1,5 @@
 package bow.model
+
 /**
  * 样本文件描述
  */

@@ -1,11 +1,11 @@
 package bpMnist
 
 object MnistDao {
-    fun train(){
+    fun train() {
         mnistModel.train()
     }
 
-    fun test(arr:DoubleArray): Int {
+    fun test(arr: DoubleArray): Int {
         return mnistModel.test(arr)
     }
 }

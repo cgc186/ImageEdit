@@ -1,6 +1,7 @@
 package kui.menu
 
 import bpMnist.MnistDao
+import cnn.CnnDao
 import kui.menu.drawingBoard.Controller
 import kui.menu.drawingBoard.Model
 import kui.menu.drawingBoard.View
@@ -33,7 +34,7 @@ object NumberMenu {
         // 设置 "开始训练" 子菜单被点击的监听器
         startCnnTrainMenuItem.addActionListener {
             println("开始训练  被点击")
-            MnistDao.train();
+            CnnDao.train();
         }
 
         // 设置 "打开手写板" 子菜单被点击的监听器

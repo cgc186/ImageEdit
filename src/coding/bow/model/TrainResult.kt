@@ -1,4 +1,5 @@
 package bow.model
+
 /**
  * 训练结果的描述
  */

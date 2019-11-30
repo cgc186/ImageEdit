@@ -4,12 +4,12 @@ import caffejni.Caffe
 
 object CaffeDao {
     private var caffe = Caffe()
-    private const val modelFile = "D:/tmp/MobileNetSSD_deploy.caffemodel"
-    private const val modelTextFile = "D:/tmp/MobileNetSSD_deploy.prototxt"
+    private const val modelFile = "data/model/MobileNetSSD_deploy.caffemodel"
+    private const val modelTextFile = "data/model/MobileNetSSD_deploy.prototxt"
 
-    private const val modelTxt = "D:/tmp/bvlc_googlenet.prototxt"
-    private const val modelBin = "D:/tmp/bvlc_googlenet.caffemodel"
-    private const val synSetWords = "D:/tmp/synset_words.txt"
+    private const val modelTxt = "data/model/bvlc_googlenet.prototxt"
+    private const val modelBin = "data/model/bvlc_googlenet.caffemodel"
+    private const val synSetWords = "data/model/synset_words.txt"
 
     fun caffe(imagePath: String, savePath: String) {
 //        val imagePath = "Z:/rgb.jpg"
@@ -17,7 +17,7 @@ object CaffeDao {
         caffe.caffe(modelFile, modelTextFile, imagePath, savePath)
     }
 
-    fun getItemType(imagePath:String): String? {
-        return caffe.getType(modelTxt,modelBin,synSetWords,imagePath)
+    fun getItemType(imagePath: String): String? {
+        return caffe.getType(modelTxt, modelBin, synSetWords, imagePath)
     }
 }
